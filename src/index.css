@@ -1,0 +1,303 @@
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
+@import "tailwindcss";
+
+/*
+ * Design system: "DESIGN for CBC" / Structural Precision (xem DESIGN for CBC.md ở gốc repo).
+ * Nền sáng, sắc cạnh (bo góc 0), viền mảnh thay cho shadow mềm/kính mờ. Deep Navy dành cho
+ * khối điều hướng (Sidebar/TopBar/Hero/Footer), phần nội dung dùng thang surface trung tính.
+ */
+@theme {
+  /* Hanken Grotesk dùng cho cả heading lẫn body theo đúng spec; Space Grotesk chỉ dùng cho
+     nhãn viết hoa/kỹ thuật (label-caps, label-md, mã dự án...). */
+  --font-sans: "Hanken Grotesk", "Inter", system-ui, -apple-system, sans-serif;
+  --font-heading: "Hanken Grotesk", "Inter", system-ui, -apple-system, sans-serif;
+  --font-label: "Space Grotesk", "Hanken Grotesk", system-ui, -apple-system, sans-serif;
+
+  /* ---- Màu thương hiệu CBC (Deep Navy / Structural Red / Sky Accent / Concrete Gray) ---- */
+  --color-navy: #06477c; /* primary anchor - nav, header, nút chính */
+  --color-navy-deep: #003058; /* đậm nhất - hero/footer/pressed state */
+  --color-navy-tint: #e8eef4; /* nền phụ rất nhạt cho hover/selected trên nền sáng */
+
+  /* Giữ tên biến --color-brand/--color-brand-dim/--color-technical để không phải sửa lại
+     hàng chục file đang dùng text-brand/bg-brand/accent-brand... - chỉ đổi giá trị hex. */
+  --color-brand: #ed1c24; /* Structural Red - accent/CTA, dùng tiết chế */
+  --color-brand-dim: #b3141a; /* hover/pressed của brand */
+  --color-brand-tint-1: #f4767b;
+  --color-brand-tint-2: #f9b2b5;
+  --color-brand-tint-3: #fde3e4;
+  --color-technical: #4ac4f3; /* Sky Accent - dữ liệu kỹ thuật, progress, MEP */
+  --color-concrete: #808080; /* Concrete Gray - viền/nền phụ/chữ phụ */
+
+  /* ---- Thang màu trung tính (từ frontmatter DESIGN for CBC.md) - nền sáng toàn platform ---- */
+  --color-surface: #faf9f9;
+  --color-surface-dim: #dbdad9;
+  --color-surface-bright: #faf9f9;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f5f3f3;
+  --color-surface-container: #efeded;
+  --color-surface-container-high: #e9e8e8;
+  --color-surface-container-highest: #e3e2e2;
+  --color-on-surface: #1b1c1c;
+  --color-on-surface-variant: #42474f;
+  --color-inverse-surface: #303031;
+  --color-inverse-on-surface: #f2f0f0;
+  --color-outline: #727780;
+  --color-outline-variant: #c2c7d1;
+  --color-background: #faf9f9;
+  --color-on-background: #1b1c1c;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  /* ---- Màu trạng thái - đã hiệu chỉnh để đủ tương phản làm CHỮ trên nền trắng (giữ
+     nguyên tên biến so với bản cũ để tone.ts/Badge/KpiCard không phải đổi logic) ---- */
+  --color-status-success: #146c2e;
+  --color-status-success-dim: #0e5323;
+  --color-status-warning: #b45309;
+  --color-status-danger: #ba1a1a;
+  --color-status-info: #0f6fb0;
+  --color-status-neutral: #59636e;
+
+  /* ---- Màu bộ môn (mô hình 3D, legend, biểu đồ) - đã hiệu chỉnh cho nền sáng.
+     Kết cấu dùng thẳng Deep Navy (đúng tinh thần "nền móng, kết cấu vững chắc" của brand);
+     MEP kế thừa quy ước cũ "chỉ dùng Sky Accent cho MEP" nhưng đậm hơn bản 3D để đọc được
+     dưới dạng text/legend/đường biểu đồ trên nền trắng (bản #4AC4F3 tươi giữ lại riêng cho
+     vật liệu 3D trong materials.ts). ---- */
+  --color-discipline-kientruc: #5c6570;
+  --color-discipline-ketcau: #06477c;
+  --color-discipline-mep: #0f7ea8;
+  --color-discipline-hatang: #4b7a63;
+
+  /* Bảng màu định danh (categorical) cho biểu đồ nhiều nhóm, 2 màu đầu bám brand. */
+  --color-chart-1: #06477c;
+  --color-chart-2: #ed1c24;
+  --color-chart-3: #4ac4f3;
+  --color-chart-4: #c98500;
+  --color-chart-5: #4b7a63;
+  --color-chart-6: #8a5b9a;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-outline-variant);
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-outline);
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fadein {
+  animation: fadein 0.25s ease-out;
+}
+
+@keyframes countup-fade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-countup {
+  animation: countup-fade 0.4s ease-out;
+}
+
+/* ============ Elevation "Structural Precision": viền mảnh + hard shadow, không blur ============ */
+
+/* Panel nền sáng dùng chung cho card/table/sidebar-panel trong toàn bộ nội dung app. */
+.panel {
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-outline-variant);
+}
+.panel-strong {
+  background: var(--color-surface-container-low);
+  border: 1px solid var(--color-outline-variant);
+}
+
+/* Hover "brutalist pop": viền chuyển Navy + shadow cứng dịch lệch, không dùng shadow mềm. */
+.panel-hover {
+  transition:
+    box-shadow 150ms ease,
+    transform 150ms ease,
+    border-color 150ms ease;
+}
+.panel-hover:hover {
+  border-color: var(--color-navy);
+  box-shadow: 4px 4px 0 0 rgba(6, 71, 124, 0.35);
+  transform: translate(-2px, -2px);
+}
+
+/* Shadow cứng tĩnh (không cần hover) - dùng cho trạng thái active/CTA nổi bật. */
+.pop-shadow {
+  box-shadow: 4px 4px 0 0 rgba(6, 71, 124, 0.35);
+}
+
+/* Panel nền Deep Navy - dùng riêng cho khối điều hướng (Sidebar/TopBar). */
+.panel-navy {
+  background: var(--color-navy);
+  border: 1px solid var(--color-navy-deep);
+}
+
+/* Overlay/backdrop cho modal, dropdown lớn - Navy bán trong suốt thay vì blur tối. */
+.overlay-navy {
+  background: rgba(6, 71, 124, 0.8);
+}
+
+/* ============ Typography tiện ích ============ */
+
+.label-caps {
+  font-family: var(--font-label);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.label-md {
+  font-family: var(--font-label);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+}
+
+/* ============ Buttons ============ */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--color-navy);
+  color: #fff;
+  border: 1px solid var(--color-navy);
+  padding: 0.625rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+.btn-primary:hover {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: transparent;
+  color: var(--color-navy);
+  border: 2px solid var(--color-navy);
+  padding: 0.5625rem 1.1875rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: background-color 150ms ease;
+}
+.btn-secondary:hover {
+  background: var(--color-navy-tint);
+}
+
+.btn-ghost {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--color-navy);
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding-bottom: 2px;
+  background: none;
+  border: none;
+}
+.btn-ghost::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: 0;
+  height: 2px;
+  background: var(--color-brand);
+  transition: right 200ms ease;
+}
+.btn-ghost:hover::after {
+  right: 0;
+}
+
+/* ============ Lists: bullet vuông đỏ 4px thay chấm tròn ============ */
+
+.list-structural {
+  list-style: none;
+  padding-left: 0;
+}
+.list-structural > li {
+  position: relative;
+  padding-left: 1rem;
+}
+.list-structural > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 4px;
+  height: 4px;
+  background: var(--color-brand);
+}
+
+/* ============ Vòng đời BIM (Intro) - line chạy vẫn dùng nhưng đổi màu sang Structural Red ============ */
+
+@keyframes lifecycle-flow {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+.lifecycle-line {
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    rgba(237, 28, 36, 0.75) 45%,
+    rgba(237, 28, 36, 0.75) 55%,
+    transparent
+  );
+  background-size: 220% 100%;
+  animation: lifecycle-flow 5s linear infinite;
+}

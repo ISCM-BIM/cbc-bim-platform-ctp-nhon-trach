@@ -1,0 +1,38 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+.vercel
+.env*
+
+# File nguồn CBC gửi ("kho nháp" - đã copy bản dùng thật vào src/assets/logos/, không cần
+# track trùng lặp bản gốc ở đây để tránh nhân đôi ~44MB).
+/CBC-PNG1.png
+/Dữ liệu dự án/
+
+
+# public/project-data/ (file IFC thật + ảnh phối cảnh) CÓ track trong git ở repo này - deploy
+# qua GitHub Pages (xem .github/workflows/deploy-pages.yml), không dùng Vercel Blob nên cần các
+# file này có mặt trong repo để bước build của Actions đọc được. Từng file đều dưới giới hạn
+# cứng 100MB của GitHub (file IFC ~67MB - GitHub sẽ cảnh báo "hơi lớn" khi push nhưng vẫn nhận).

@@ -1,0 +1,8 @@
+# Vercel CLI không tự đọc .gitignore khi đóng gói "source" để build (khác git) - phải khai
+# riêng ở đây, nếu không các file/folder nguồn cục bộ lớn (đã gitignore) vẫn bị đẩy lên theo,
+# làm hao hụt gần hết hạn mức 100MB "Static File uploads" của gói Vercel Hobby dù không hề
+# được dùng trong build thật (xác nhận thực tế: source upload 92.5MB dù dist/ chỉ 6.5MB - gần
+# như toàn bộ là do thư mục "Dữ liệu dự án/" ~87MB bị đẩy kèm).
+Dữ liệu dự án
+CBC-PNG1.png
+public/project-data
