@@ -14,7 +14,10 @@ interface IfcClashMarkersProps {
   onSelect: (id: string) => void
 }
 
-const RADIUS = 0.5
+// Bán kính quả cầu đánh dấu va chạm (đơn vị mét thật trong mô hình) - tăng từ 0.5 lên theo yêu
+// cầu người dùng (2026-08-25) để dễ bấm trúng hơn trên model thật (cấu kiện dày đặc, marker nhỏ
+// dễ bị khuất/khó nhắm chuột).
+const RADIUS = 0.9
 
 export function IfcClashMarkers({ markers, selectedId, onSelect }: IfcClashMarkersProps) {
   const material = useMemo(

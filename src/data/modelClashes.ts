@@ -1,12 +1,16 @@
 export interface ModelClashPoint {
   id: string
   title: string
-  image: string
+  images: string[]
 }
 
-// Chưa có báo cáo va chạm thật đã kiểm tra (ảnh chụp màn hình Revit khoanh vị trí va chạm) cho
-// dự án này - khác dự án trước, lần này không có file Excel "va chạm đã kiểm tra" nào được cung
-// cấp cùng bộ hồ sơ. Để trống thay vì dùng lại ảnh va chạm của dự án khác (sẽ sai ngữ cảnh cấu
-// kiện, không giống cách "ảnh minh hoạ có ghi rõ nguồn" đã áp dụng cho sitePhotos.ts) - Model3D.tsx
-// đã tự xử lý mảng rỗng gọn gàng (không hiện marker nào trên mô hình 3D, không cần sửa thêm code).
+// 2026-08-25: từng thử nạp va chạm thật từ "TH-CAP NHAT VA CHAM (1).xlsx" - sau đó người dùng
+// xác nhận file đó thuộc dự án KHÁC (TH, xem [[cbc-bim-platform-overview]] - nội dung gốc mô tả
+// "tầng lửng"/"phòng đóng gói"/"khu đóng gói gia vị", đúng bối cảnh nhà máy chế biến thực phẩm
+// của dự án đó, không phải RBF6) và yêu cầu xoá khỏi nền tảng này. Đã xoá dữ liệu + ảnh gốc
+// (src/assets/clashes/) - để trống lại, đúng nguyên tắc cũ: dự án CTP Nhơn Trạch chưa ký hợp
+// đồng nên chưa có báo cáo va chạm thật của riêng RBF6. Model3D.tsx đã tự xử lý mảng rỗng gọn
+// gàng (không hiện marker nào). Component hiển thị (IfcClashMarkers.tsx bán kính 0.9m dễ bấm,
+// ModelClashPanel.tsx hiện nhiều ảnh/điểm + bấm phóng to toàn màn hình) vẫn giữ nguyên - chỉ là
+// UI tổng quát, sẵn sàng dùng lại ngay khi có dữ liệu va chạm thật CỦA RBF6.
 export const modelClashes: ModelClashPoint[] = []

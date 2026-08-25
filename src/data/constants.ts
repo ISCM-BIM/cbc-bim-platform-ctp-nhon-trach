@@ -16,10 +16,13 @@ import type { BlockInfo, Discipline } from '../types'
 // trạm điện 02 + bệ đỡ, hàng rào/cổng/nhà bảo vệ 3, hạ tầng kỹ thuật). KHÔNG bao gồm RBF1-5 hay
 // các hạng mục Giai đoạn 1 khác của ctpark Nhơn Trạch (những hạng mục đó đã/đang triển khai theo
 // gói thầu khác, ngoài phạm vi dữ liệu được cung cấp cho nền tảng này).
-export const PROJECT_NAME = 'Nhà xưởng xây sẵn RBF6-7 – ctpark Nhơn Trạch'
+// Tên dự án CHÍNH XÁC theo xác nhận trực tiếp của người dùng (2026-08-25) - khớp đúng tên trong
+// khung tên hồ sơ BOQ/thiết kế ("DỰ ÁN CỦA CÔNG TY TNHH CTP NHƠN TRẠCH_GIAI ĐOẠN 2"), dùng chính
+// xác cụm này thay vì tên diễn giải thêm ("Nhà xưởng xây sẵn RBF6-7...") như trước.
+export const PROJECT_NAME = 'Dự án Công ty TNHH CTP Nhơn Trạch - Giai đoạn 2'
 export const PROJECT_ADDRESS =
   'Lô B-6, đường Võ Văn Tần, Khu công nghiệp Dệt May Nhơn Trạch, phường Nhơn Trạch, TP. Đồng Nai'
-export const PLATFORM_TITLE = 'DỰ ÁN CTPARK NHƠN TRẠCH — GIAI ĐOẠN 2 (NHÀ XƯỞNG RBF6-7)'
+export const PLATFORM_TITLE = 'DỰ ÁN CÔNG TY TNHH CTP NHƠN TRẠCH - GIAI ĐOẠN 2'
 // Tên hiển thị ngắn gọn cho 3 vai trò trên khung tên dự án (ProjectInfoPanel...) - đúng tên pháp
 // nhân trong khung tên hồ sơ thiết kế, không viết tắt thêm.
 export const PROJECT_INVESTOR = 'Công ty TNHH CTP Nhơn Trạch'

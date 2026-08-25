@@ -31,11 +31,12 @@ const COLUMN_CLASSES = new Set(['IFCCOLUMN', 'IFCCOLUMNSTANDARDCASE'])
 
 /**
  * Chọn ra `count` cấu kiện CỘT THẬT trong mô hình đã tải, trả về toạ độ tâm hình học của
- * chúng - dùng làm vị trí đặt điểm đánh dấu va chạm thật (file "TH- VA CHAM.xlsx" CBC cung
- * cấp không kèm toạ độ/trục cụ thể cho từng va chạm, tất cả đều mô tả dạng "X va chạm CỘT"),
- * nên đặt điểm đánh dấu lên đúng cấu kiện cột thật của mô hình - không phải toạ độ chính xác
- * 1-1 khớp với từng va chạm trong ảnh gốc, nhưng vẫn nằm trên kết cấu thật thay vì bịa số.
- * Chọn dàn đều theo danh sách expressID (đã sắp) để các điểm không dồn vào 1 chỗ.
+ * chúng - dùng làm vị trí đặt điểm đánh dấu va chạm khi có dữ liệu va chạm thật nhưng hồ sơ gốc
+ * không kèm toạ độ/trục cụ thể cho từng va chạm (mô tả dạng "X va chạm CỘT"), nên đặt điểm đánh
+ * dấu lên đúng cấu kiện cột thật của mô hình - không phải toạ độ chính xác 1-1 khớp với từng va
+ * chạm trong ảnh gốc, nhưng vẫn nằm trên kết cấu thật thay vì bịa số. Chọn dàn đều theo danh
+ * sách expressID (đã sắp) để các điểm không dồn vào 1 chỗ. (data/modelClashes.ts hiện đang rỗng
+ * - xem ghi chú trong file đó - hàm này chỉ chạy khi mảng đó có phần tử.)
  */
 export function pickColumnPositions(model: ParsedIfcModel, count: number): THREE.Vector3[] {
   const columnIDs: number[] = []
