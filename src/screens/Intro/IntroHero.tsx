@@ -3,12 +3,14 @@ import { WireframeBackground } from './WireframeBackground'
 import cbcLogo from '../../assets/logos/cbc_logo_white.png'
 import ctdLogo from '../../assets/logos/ctdlogo_white.png'
 import iscmLogo from '../../assets/logos/iscm_white_text_v1.png'
+import { useLanguage } from '../../i18n/LanguageContext'
 
 interface IntroHeroProps {
   onEnter: () => void
 }
 
 export function IntroHero({ onEnter }: IntroHeroProps) {
+  const { tr } = useLanguage()
   return (
     <section className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-6 py-24">
       <div className="absolute inset-0 opacity-60 saturate-[0.35]">
@@ -30,13 +32,14 @@ export function IntroHero({ onEnter }: IntroHeroProps) {
           BIM-based Construction Monitoring Platform
         </h1>
         <p className="mt-4 max-w-xl text-base text-white/60">
-          Viện Đô thị Thông minh và Quản lý — Đại học Kinh tế TP.HCM
+          {tr('Viện Đô thị Thông minh và Quản lý — Đại học Kinh tế TP.HCM', 'Institute for Smart City Management — University of Economics Ho Chi Minh City')}
         </p>
 
         <p className="mt-6 max-w-xl text-sm leading-relaxed text-white/55">
-          Nền tảng do ISCM–UEH xây dựng và vận hành cùng CBC, phối hợp dữ liệu BIM giữa đơn vị
-          tư vấn, nhà thầu, chủ đầu tư — từ mô hình hoá, kiểm tra xung đột, kiểm soát khối
-          lượng đến bàn giao vận hành.
+          {tr(
+            'Nền tảng do ISCM–UEH xây dựng và vận hành cùng CBC, phối hợp dữ liệu BIM giữa đơn vị tư vấn, nhà thầu, chủ đầu tư — từ mô hình hoá, kiểm tra xung đột, kiểm soát khối lượng đến bàn giao vận hành.',
+            'A platform built and operated by ISCM–UEH together with CBC, coordinating BIM data between the consultant, contractor, and investor — from modeling and clash detection to quantity control and operational handover.',
+          )}
         </p>
 
         <button
@@ -44,7 +47,7 @@ export function IntroHero({ onEnter }: IntroHeroProps) {
           onClick={onEnter}
           className="pop-shadow mt-10 flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 text-sm font-semibold text-white transition-transform duration-200 hover:scale-105"
         >
-          Khám phá nền tảng
+          {tr('Khám phá nền tảng', 'Explore the platform')}
           <ArrowRight size={16} />
         </button>
       </div>

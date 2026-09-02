@@ -2,6 +2,8 @@ import type { ReactNode } from 'react'
 import { X, FileText, Wrench, MapPin, Calendar, ShieldCheck } from 'lucide-react'
 import type { Equipment } from '../../types'
 import { formatDate } from '../../utils/format'
+import { useLanguage } from '../../i18n/LanguageContext'
+import { equipmentSystemLabel } from '../../i18n/enumLabels'
 
 interface EquipmentDetailPanelProps {
   equipment: Equipment
@@ -9,6 +11,7 @@ interface EquipmentDetailPanelProps {
 }
 
 export function EquipmentDetailPanel({ equipment, onClose }: EquipmentDetailPanelProps) {
+  const { language, tr } = useLanguage()
   return (
     <div className="panel flex h-full w-96 shrink-0 flex-col p-4">
       <div className="mb-3 flex items-start justify-between gap-2">
@@ -22,18 +25,18 @@ export function EquipmentDetailPanel({ equipment, onClose }: EquipmentDetailPane
       </div>
 
       <div className="space-y-1.5 border border-outline-variant bg-surface-container-lowest p-3 text-xs text-on-surface-variant">
-        <Row label="Hệ thống" value={equipment.system} />
-        <Row label="Vị trí" value={equipment.location} icon={<MapPin size={12} />} />
-        <Row label="Hãng sản xuất" value={equipment.manufacturer} />
+        <Row label={tr('Hệ thống', 'System')} value={equipmentSystemLabel(equipment.system, language)} />
+        <Row label={tr('Vị trí', 'Location')} value={equipment.location} icon={<MapPin size={12} />} />
+        <Row label={tr('Hãng sản xuất', 'Manufacturer')} value={equipment.manufacturer} />
         <Row label="Model" value={equipment.model} mono />
-        <Row label="Công suất / thông số" value={equipment.capacity} />
-        <Row label="Ngày lắp đặt" value={formatDate(equipment.installDate)} icon={<Calendar size={12} />} />
-        <Row label="Hạn bảo hành" value={formatDate(equipment.warrantyUntil)} icon={<ShieldCheck size={12} />} />
-        <Row label="Chu kỳ bảo trì" value={`${equipment.maintenanceCycleMonths} tháng`} icon={<Wrench size={12} />} />
+        <Row label={tr('Công suất / thông số', 'Capacity / specs')} value={equipment.capacity} />
+        <Row label={tr('Ngày lắp đặt', 'Install date')} value={formatDate(equipment.installDate)} icon={<Calendar size={12} />} />
+        <Row label={tr('Hạn bảo hành', 'Warranty until')} value={formatDate(equipment.warrantyUntil)} icon={<ShieldCheck size={12} />} />
+        <Row label={tr('Chu kỳ bảo trì', 'Maintenance cycle')} value={`${equipment.maintenanceCycleMonths} ${tr('tháng', 'months')}`} icon={<Wrench size={12} />} />
       </div>
 
       <div className="mt-4">
-        <p className="mb-2 text-xs font-semibold text-on-surface-variant">Lịch bảo trì 12 tháng tới</p>
+        <p className="mb-2 text-xs font-semibold text-on-surface-variant">{tr('Lịch bảo trì 12 tháng tới', 'Maintenance schedule for the next 12 months')}</p>
         <div className="space-y-1.5">
           {equipment.upcomingMaintenance.map((m, i) => (
             <div key={i} className="flex items-center justify-between border border-outline-variant bg-surface-container-lowest px-2.5 py-1.5 text-xs">
@@ -45,7 +48,7 @@ export function EquipmentDetailPanel({ equipment, onClose }: EquipmentDetailPane
       </div>
 
       <div className="mt-4 flex-1 overflow-y-auto">
-        <p className="mb-2 text-xs font-semibold text-on-surface-variant">Tài liệu đính kèm</p>
+        <p className="mb-2 text-xs font-semibold text-on-surface-variant">{tr('Tài liệu đính kèm', 'Attached documents')}</p>
         <div className="space-y-1.5">
           {equipment.documents.map((doc, i) => (
             <div key={i} className="flex items-center gap-2 border border-outline-variant bg-surface-container-lowest px-2.5 py-1.5 text-xs text-on-surface-variant">

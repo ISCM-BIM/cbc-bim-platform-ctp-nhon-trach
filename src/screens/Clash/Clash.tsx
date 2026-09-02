@@ -5,6 +5,8 @@ import { clashes } from '../../data/clashes'
 import { BLOCKS } from '../../data/constants'
 import { getPreventedCost } from '../../utils/metrics'
 import { formatVNDShort } from '../../utils/format'
+import { useLanguage } from '../../i18n/LanguageContext'
+import { clashStatusLabel } from '../../i18n/enumLabels'
 import { ClashCharts } from './ClashCharts'
 import { ClashTable, type SortState } from './ClashTable'
 import { ClashDetailPanel } from './ClashDetailPanel'
@@ -13,14 +15,16 @@ import { ClashDetailPanel } from './ClashDetailPanel'
 // hiện 1 trạng thái rỗng rõ ràng thay vì banner "₫0 ngăn ngừa" + 3 biểu đồ phẳng trống trơn,
 // dễ gây hiểu lầm là lỗi hiển thị.
 function EmptyClashState() {
+  const { tr } = useLanguage()
   return (
     <div className="flex h-full flex-col items-center justify-center gap-3 p-8 text-center">
       <ScanSearch size={28} className="text-outline" />
-      <p className="text-sm font-medium text-on-surface">Chưa chạy kiểm tra xung đột</p>
+      <p className="text-sm font-medium text-on-surface">{tr('Chưa chạy kiểm tra xung đột', 'Clash detection not yet run')}</p>
       <p className="max-w-sm text-xs leading-relaxed text-on-surface-variant">
-        Dự án chưa ký hợp đồng nên mô hình phối hợp Kiến trúc – Kết cấu – MEP cho RBF6-7 chưa được
-        dựng đủ để chạy kiểm tra xung đột. Tính năng này sẽ có dữ liệu ngay khi bước vào giai đoạn
-        đệ trình Shop Drawing MEPF.
+        {tr(
+          'Dự án chưa ký hợp đồng nên mô hình phối hợp Kiến trúc – Kết cấu – MEP cho RBF6-7 chưa được dựng đủ để chạy kiểm tra xung đột. Tính năng này sẽ có dữ liệu ngay khi bước vào giai đoạn đệ trình Shop Drawing MEPF.',
+          'The project has not been contracted yet, so the coordinated Architecture-Structural-MEP model for RBF6-7 has not been built out enough to run clash detection. This feature will have data as soon as the MEPF Shop Drawing submission stage begins.',
+        )}
       </p>
     </div>
   )
@@ -34,6 +38,7 @@ const SEVERITIES: ClashSeverity[] = ['A', 'B', 'C']
 const STATUSES: ClashStatus[] = ['Mới', 'Đang xử lý', 'Đã xử lý', 'Bỏ qua']
 
 export function Clash() {
+  const { language, tr } = useLanguage()
   const [search, setSearch] = useState('')
   const [blockFilter, setBlockFilter] = useState<BlockFilter>('all')
   const [severityFilter, setSeverityFilter] = useState<SeverityFilter>('all')
@@ -98,11 +103,14 @@ export function Clash() {
             <ShieldCheck size={22} />
           </div>
           <div>
-            <p className="text-xs font-medium text-on-surface-variant">Tổng chi phí rủi ro đã ngăn ngừa</p>
-            <p className="text-3xl font-bold text-status-success">{formatVNDShort(preventedCost)}</p>
+            <p className="text-xs font-medium text-on-surface-variant">{tr('Tổng chi phí rủi ro đã ngăn ngừa', 'Total risk cost prevented')}</p>
+            <p className="text-3xl font-bold text-status-success">{formatVNDShort(preventedCost, language)}</p>
           </div>
           <p className="ml-auto max-w-xs text-xs leading-relaxed text-on-surface-variant">
-            Tổng chi phí ước tính của các xung đột nhóm A, B đã được phát hiện và xử lý qua mô hình BIM trước khi thi công.
+            {tr(
+              'Tổng chi phí ước tính của các xung đột nhóm A, B đã được phát hiện và xử lý qua mô hình BIM trước khi thi công.',
+              'Total estimated cost of Group A and B clashes detected and resolved through the BIM model before construction.',
+            )}
           </p>
         </div>
 
@@ -114,13 +122,13 @@ export function Clash() {
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Tìm theo mã hoặc mô tả..."
+              placeholder={tr('Tìm theo mã hoặc mô tả...', 'Search by code or description...')}
               className="w-48 bg-transparent text-xs text-on-surface placeholder:text-outline focus:outline-none"
             />
           </div>
           <FilterGroup label="Block">
             <FilterChip active={blockFilter === 'all'} onClick={() => setBlockFilter('all')}>
-              Tất cả
+              {tr('Tất cả', 'All')}
             </FilterChip>
             {BLOCKS.map((b) => (
               <FilterChip key={b.id} active={blockFilter === b.id} onClick={() => setBlockFilter(b.id)}>
@@ -128,9 +136,9 @@ export function Clash() {
               </FilterChip>
             ))}
           </FilterGroup>
-          <FilterGroup label="Mức độ">
+          <FilterGroup label={tr('Mức độ', 'Severity')}>
             <FilterChip active={severityFilter === 'all'} onClick={() => setSeverityFilter('all')}>
-              Tất cả
+              {tr('Tất cả', 'All')}
             </FilterChip>
             {SEVERITIES.map((s) => (
               <FilterChip key={s} active={severityFilter === s} onClick={() => setSeverityFilter(s)}>
@@ -138,17 +146,19 @@ export function Clash() {
               </FilterChip>
             ))}
           </FilterGroup>
-          <FilterGroup label="Trạng thái">
+          <FilterGroup label={tr('Trạng thái', 'Status')}>
             <FilterChip active={statusFilter === 'all'} onClick={() => setStatusFilter('all')}>
-              Tất cả
+              {tr('Tất cả', 'All')}
             </FilterChip>
             {STATUSES.map((s) => (
               <FilterChip key={s} active={statusFilter === s} onClick={() => setStatusFilter(s)}>
-                {s}
+                {clashStatusLabel(s, language)}
               </FilterChip>
             ))}
           </FilterGroup>
-          <span className="ml-auto text-xs text-on-surface-variant">{filtered.length} / {clashes.length} xung đột</span>
+          <span className="ml-auto text-xs text-on-surface-variant">
+            {filtered.length} / {clashes.length} {tr('xung đột', 'clashes')}
+          </span>
         </div>
 
         <ClashTable items={filtered} selectedId={selectedId} onSelect={(c) => setSelectedId(c.id)} sort={sort} onSortChange={setSort} />

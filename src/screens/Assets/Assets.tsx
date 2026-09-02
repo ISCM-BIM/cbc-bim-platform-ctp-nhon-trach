@@ -6,6 +6,8 @@ import { EquipmentTable } from './EquipmentTable'
 import { EquipmentDetailPanel } from './EquipmentDetailPanel'
 import { TenantInfoPanel } from './TenantInfoPanel'
 import { MaintenanceCalendar } from './MaintenanceCalendar'
+import { useLanguage } from '../../i18n/LanguageContext'
+import { equipmentSystemLabel } from '../../i18n/enumLabels'
 
 type BlockFilter = 'all' | BlockId
 type SystemFilter = 'all' | EquipmentSystem
@@ -13,6 +15,7 @@ type SystemFilter = 'all' | EquipmentSystem
 const SYSTEMS: EquipmentSystem[] = ['PCCC', 'Điện', 'Cấp thoát nước', 'HVAC', 'Hạ tầng']
 
 export function Assets() {
+  const { language, tr } = useLanguage()
   const [systemFilter, setSystemFilter] = useState<SystemFilter>('all')
   const [blockFilter, setBlockFilter] = useState<BlockFilter>('all')
   const [selected, setSelected] = useState<Equipment | null>(null)
@@ -33,19 +36,19 @@ export function Assets() {
         <TenantInfoPanel />
 
         <div className="flex flex-wrap items-center gap-3 panel p-3">
-          <FilterGroup label="Hệ thống">
+          <FilterGroup label={tr('Hệ thống', 'System')}>
             <FilterChip active={systemFilter === 'all'} onClick={() => setSystemFilter('all')}>
-              Tất cả
+              {tr('Tất cả', 'All')}
             </FilterChip>
             {SYSTEMS.map((s) => (
               <FilterChip key={s} active={systemFilter === s} onClick={() => setSystemFilter(s)}>
-                {s}
+                {equipmentSystemLabel(s, language)}
               </FilterChip>
             ))}
           </FilterGroup>
           <FilterGroup label="Block">
             <FilterChip active={blockFilter === 'all'} onClick={() => setBlockFilter('all')}>
-              Tất cả
+              {tr('Tất cả', 'All')}
             </FilterChip>
             {BLOCKS.map((b) => (
               <FilterChip key={b.id} active={blockFilter === b.id} onClick={() => setBlockFilter(b.id)}>
@@ -54,7 +57,7 @@ export function Assets() {
             ))}
           </FilterGroup>
           <span className="ml-auto text-xs text-on-surface-variant">
-            {filtered.length} / {equipment.length} thiết bị
+            {filtered.length} / {equipment.length} {tr('thiết bị', 'equipment items')}
           </span>
         </div>
 

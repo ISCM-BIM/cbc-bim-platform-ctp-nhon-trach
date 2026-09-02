@@ -19,6 +19,7 @@ import { MonthSlider } from './MonthSlider'
 import { useIfcModel } from './useIfcModel'
 import { describeCurrentActivity, DAYS_PER_MONTH } from '../../ifc/ifc4d'
 import { realDayRangeForWbs } from '../../ifc/realScheduleMapping'
+import { useLanguage, type Language } from '../../i18n/LanguageContext'
 
 // Số ngày thi công thật CỦA RIÊNG RBF6 (mã "4.3" trong schedule.ts) - model IFC hiện tại chỉ
 // dựng 1 nhà (RBF6), không phải cả Giai đoạn 2 (349 ngày, gồm cả RBF7) - xem ghi chú đầu
@@ -91,6 +92,7 @@ interface Model3DProps {
 
 export function Model3D({ focus }: Model3DProps) {
   const { role } = useRole()
+  const { language, tr } = useLanguage()
   const ifc = useIfcModel()
 
   const [month, setMonth] = useState(1)
@@ -177,9 +179,9 @@ export function Model3D({ focus }: Model3DProps) {
   // khung hình.
   const currentActivity = useMemo(() => {
     if (!ifc.plan || !ifc.model) return null
-    return describeCurrentActivity(ifc.plan, month, ifc.model.storeys)
+    return describeCurrentActivity(ifc.plan, month, ifc.model.storeys, language)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ifc.plan, ifc.model, month])
+  }, [ifc.plan, ifc.model, month, language])
 
   // Chọn cấu kiện thường và chọn điểm va chạm dùng chung 1 khung panel bên phải - bấm cái này
   // phải bỏ chọn cái kia để không hiện chồng 2 panel cùng lúc.
@@ -255,10 +257,10 @@ export function Model3D({ focus }: Model3DProps) {
       {ready && isBimManager && (
         <div className="flex shrink-0 items-center gap-2">
           <p className="truncate text-xs text-on-surface-variant">
-            Mô hình dự án thật · <span className="font-medium text-on-surface">{ifc.model!.fileName}</span>
+            {tr('Mô hình dự án thật', 'Real project model')} · <span className="font-medium text-on-surface">{ifc.model!.fileName}</span>
           </p>
           <button type="button" onClick={() => setShowMapping(true)} className="btn-secondary ml-auto !px-3 !py-1.5 text-xs">
-            <SlidersHorizontal size={13} /> Tinh chỉnh 4D
+            <SlidersHorizontal size={13} /> {tr('Tinh chỉnh 4D', 'Fine-tune 4D')}
           </button>
         </div>
       )}
@@ -350,9 +352,9 @@ export function Model3D({ focus }: Model3DProps) {
               onChange={handleManualMonthChange}
               min={ifc.plan!.minMonth}
               max={ifc.plan!.maxMonth}
-              title={`Tiến độ thi công RBF6 · ${RBF6_CONSTRUCTION_DAYS} ngày (${planSourceShortLabel(ifc.plan!.source)})`}
+              title={`${tr('Tiến độ thi công RBF6', 'RBF6 construction schedule')} · ${RBF6_CONSTRUCTION_DAYS} ${tr('ngày', 'days')} (${planSourceShortLabel(ifc.plan!.source, language)})`}
               formatLabel={(m) => formatDate(dateOfMonth(m))}
-              formatMark={(m) => formatMonthShort(dateOfMonth(m))}
+              formatMark={(m) => formatMonthShort(dateOfMonth(m), language)}
               marks={monthMarks}
               isPlaying={isPlaying}
               onTogglePlay={handleTogglePlay}
@@ -379,7 +381,12 @@ export function Model3D({ focus }: Model3DProps) {
   )
 }
 
-function planSourceShortLabel(source: 'native' | 'schedule' | 'manual'): string {
+function planSourceShortLabel(source: 'native' | 'schedule' | 'manual', language: Language): string {
+  if (language === 'en') {
+    if (source === 'native') return 'native 4D data'
+    if (source === 'manual') return 'fine-tuned'
+    return 'from real construction schedule'
+  }
   if (source === 'native') return 'dữ liệu 4D gốc'
   if (source === 'manual') return 'đã tinh chỉnh'
   return 'theo tiến độ thi công thật'

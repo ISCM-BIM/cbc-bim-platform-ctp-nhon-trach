@@ -3,6 +3,8 @@ import type { ScheduleItem } from '../../types'
 import { Badge } from '../../components/common/Badge'
 import { scheduleStatusTone } from '../../utils/tone'
 import { formatDate } from '../../utils/format'
+import { useLanguage } from '../../i18n/LanguageContext'
+import { disciplineLabel, scheduleStatusLabel } from '../../i18n/enumLabels'
 
 interface ScheduleTableProps {
   items: ScheduleItem[]
@@ -11,24 +13,26 @@ interface ScheduleTableProps {
 }
 
 export function ScheduleTable({ items, collapsed, onToggle }: ScheduleTableProps) {
+  const { language, tr } = useLanguage()
   return (
     <div className="shrink-0 overflow-hidden panel">
       <div className="max-h-[420px] overflow-auto">
         <table className="w-full min-w-[920px] text-left text-xs">
           <thead className="sticky top-0 z-10 bg-surface-container-lowest text-on-surface-variant">
             <tr>
-              <th className="px-3 py-2.5 font-medium">Hạng mục</th>
+              <th className="px-3 py-2.5 font-medium">{tr('Hạng mục', 'Work item')}</th>
               <th className="px-3 py-2.5 font-medium">Block</th>
-              <th className="px-3 py-2.5 font-medium">Bộ môn</th>
-              <th className="px-3 py-2.5 font-medium">Bắt đầu - Kết thúc (KH)</th>
-              <th className="px-3 py-2.5 font-medium text-right">% hoàn thành</th>
-              <th className="px-3 py-2.5 font-medium">Trạng thái</th>
-              <th className="px-3 py-2.5 font-medium">Ghi chú</th>
+              <th className="px-3 py-2.5 font-medium">{tr('Bộ môn', 'Discipline')}</th>
+              <th className="px-3 py-2.5 font-medium">{tr('Bắt đầu - Kết thúc (KH)', 'Start - End (planned)')}</th>
+              <th className="px-3 py-2.5 font-medium text-right">{tr('% hoàn thành', '% complete')}</th>
+              <th className="px-3 py-2.5 font-medium">{tr('Trạng thái', 'Status')}</th>
+              <th className="px-3 py-2.5 font-medium">{tr('Ghi chú', 'Note')}</th>
             </tr>
           </thead>
           <tbody>
             {items.map((item) => {
               const isCollapsed = item.isSummary && collapsed.has(item.wbsCode)
+              const name = language === 'en' ? item.nameEn : item.name
               return (
                 <tr
                   key={item.id}
@@ -46,25 +50,25 @@ export function ScheduleTable({ items, collapsed, onToggle }: ScheduleTableProps
                           type="button"
                           onClick={() => onToggle(item.wbsCode)}
                           className="shrink-0 text-outline hover:text-on-surface"
-                          aria-label={isCollapsed ? 'Mở rộng' : 'Thu gọn'}
+                          aria-label={isCollapsed ? tr('Mở rộng', 'Expand') : tr('Thu gọn', 'Collapse')}
                         >
                           {isCollapsed ? <ChevronRight size={12} /> : <ChevronDown size={12} />}
                         </button>
                       ) : (
                         <span className="inline-block w-3 shrink-0" />
                       )}
-                      <span>{item.name}</span>
+                      <span>{name}</span>
                     </div>
                   </td>
-                  <td className="px-3 py-2.5">{item.block}</td>
-                  <td className="px-3 py-2.5">{item.discipline}</td>
+                  <td className="px-3 py-2.5">{item.block === 'Toàn dự án' ? tr('Toàn dự án', 'Entire project') : item.block}</td>
+                  <td className="px-3 py-2.5">{disciplineLabel(item.discipline, language)}</td>
                   <td className="whitespace-nowrap px-3 py-2.5 text-on-surface-variant">
                     {formatDate(item.plannedStart)} - {formatDate(item.plannedEnd)}
                   </td>
                   <td className="px-3 py-2.5 text-right tabular-nums">{item.percentComplete}%</td>
                   <td className="px-3 py-2.5">
                     <Badge tone={scheduleStatusTone(item.status)}>
-                      {item.status}
+                      {scheduleStatusLabel(item.status, language)}
                       {item.delayDays > 0 ? ` (+${item.delayDays}d)` : ''}
                     </Badge>
                   </td>

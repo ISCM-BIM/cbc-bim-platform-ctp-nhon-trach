@@ -4,6 +4,7 @@ import { PROJECT_START, ELAPSED_DAYS, TOTAL_PROJECT_DAYS, CURRENT_DATE, STATUS_C
 import { addMonths, daysBetween } from '../../utils/random'
 import { formatMonthShort } from '../../utils/format'
 import { rangePercent, datePercent } from './ganttMath'
+import { useLanguage } from '../../i18n/LanguageContext'
 
 interface GanttChartProps {
   items: ScheduleItem[]
@@ -34,6 +35,7 @@ function barColor(status: ScheduleItem['status']): string {
 }
 
 export function GanttChart({ items, collapsed, onToggle }: GanttChartProps) {
+  const { language, tr } = useLanguage()
   const todayPercent = (ELAPSED_DAYS / TOTAL_PROJECT_DAYS) * 100
 
   return (
@@ -48,7 +50,7 @@ export function GanttChart({ items, collapsed, onToggle }: GanttChartProps) {
                 className="absolute top-0 border-l border-outline-variant pl-1.5"
                 style={{ left: `${datePercent(m)}%` }}
               >
-                {formatMonthShort(m)}
+                {formatMonthShort(m, language)}
               </div>
             ))}
           </div>
@@ -62,6 +64,7 @@ export function GanttChart({ items, collapsed, onToggle }: GanttChartProps) {
           const actualEnd = item.actualEnd ?? CURRENT_DATE
           const actual = hasActual ? rangePercent(item.actualStart ?? item.plannedStart, actualEnd) : null
           const isCollapsed = item.isSummary && collapsed.has(item.wbsCode)
+          const name = language === 'en' ? item.nameEn : item.name
 
           return (
             <div
@@ -73,14 +76,14 @@ export function GanttChart({ items, collapsed, onToggle }: GanttChartProps) {
               <div
                 className="flex w-64 shrink-0 items-center gap-1 truncate pr-3 text-xs text-on-surface-variant"
                 style={{ paddingLeft: `${(item.level - 1) * 14}px` }}
-                title={item.name}
+                title={name}
               >
                 {item.isSummary ? (
                   <button
                     type="button"
                     onClick={() => onToggle(item.wbsCode)}
                     className="shrink-0 text-outline hover:text-on-surface"
-                    aria-label={isCollapsed ? 'Mở rộng' : 'Thu gọn'}
+                    aria-label={isCollapsed ? tr('Mở rộng', 'Expand') : tr('Thu gọn', 'Collapse')}
                   >
                     {isCollapsed ? <ChevronRight size={12} /> : <ChevronDown size={12} />}
                   </button>
@@ -88,7 +91,7 @@ export function GanttChart({ items, collapsed, onToggle }: GanttChartProps) {
                   <span className="inline-block w-3 shrink-0" />
                 )}
                 <span className={`truncate ${item.isSummary ? 'font-semibold text-on-surface' : ''}`}>
-                  {item.name}
+                  {name}
                 </span>
               </div>
               <div className="relative h-6 flex-1 bg-surface-container-lowest">
@@ -102,7 +105,7 @@ export function GanttChart({ items, collapsed, onToggle }: GanttChartProps) {
                 <div
                   className="absolute z-10 h-1.5 rounded-full bg-surface-container-high"
                   style={{ left: `${planned.left}%`, width: `${planned.width}%`, top: '4px' }}
-                  title={`Kế hoạch: ${item.name}`}
+                  title={`${tr('Kế hoạch', 'Planned')}: ${name}`}
                 />
                 {actual && (
                   <div
@@ -113,7 +116,7 @@ export function GanttChart({ items, collapsed, onToggle }: GanttChartProps) {
                       top: '14px',
                       backgroundColor: barColor(item.status),
                     }}
-                    title={`Thực tế: ${item.name}`}
+                    title={`${tr('Thực tế', 'Actual')}: ${name}`}
                   />
                 )}
                 <div
@@ -128,16 +131,16 @@ export function GanttChart({ items, collapsed, onToggle }: GanttChartProps) {
 
       <div className="mt-3 flex items-center gap-5 border-t border-outline-variant pt-3 text-[11px] text-on-surface-variant">
         <span className="flex items-center gap-1.5">
-          <span className="h-1.5 w-4 rounded-full bg-surface-container-high" /> Kế hoạch
+          <span className="h-1.5 w-4 rounded-full bg-surface-container-high" /> {tr('Kế hoạch', 'Planned')}
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-1.5 w-4 rounded-full bg-status-success" /> Đúng/hoàn thành
+          <span className="h-1.5 w-4 rounded-full bg-status-success" /> {tr('Đúng/hoàn thành', 'On track / completed')}
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-1.5 w-4 rounded-full bg-status-danger" /> Chậm tiến độ
+          <span className="h-1.5 w-4 rounded-full bg-status-danger" /> {tr('Chậm tiến độ', 'Delayed')}
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-3 w-px bg-status-info" /> Hôm nay ({Math.round(datePercent(CURRENT_DATE))}%)
+          <span className="h-3 w-px bg-status-info" /> {tr('Hôm nay', 'Today')} ({Math.round(datePercent(CURRENT_DATE))}%)
         </span>
       </div>
     </div>

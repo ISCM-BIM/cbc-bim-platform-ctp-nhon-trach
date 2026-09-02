@@ -6,10 +6,13 @@ import { BLOCKS } from '../../data/constants'
 import { Badge } from '../../components/common/Badge'
 import { fieldChangeStatusTone } from '../../utils/tone'
 import { formatDate } from '../../utils/format'
+import { useLanguage } from '../../i18n/LanguageContext'
+import { disciplineLabel, fieldChangeStatusLabel } from '../../i18n/enumLabels'
 
 type BlockFilter = 'all' | BlockId
 
 export function FieldChangeTimeline() {
+  const { language, tr } = useLanguage()
   const [blockFilter, setBlockFilter] = useState<BlockFilter>('all')
   const items = [...fieldChanges]
     .filter((c) => blockFilter === 'all' || c.block === blockFilter)
@@ -18,10 +21,10 @@ export function FieldChangeTimeline() {
   return (
     <div className="panel p-4">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm font-semibold text-on-surface">Dòng thời gian thay đổi hiện trường</p>
+        <p className="text-sm font-semibold text-on-surface">{tr('Dòng thời gian thay đổi hiện trường', 'Field change timeline')}</p>
         <div className="flex gap-1.5">
           <FilterChip active={blockFilter === 'all'} onClick={() => setBlockFilter('all')}>
-            Tất cả
+            {tr('Tất cả', 'All')}
           </FilterChip>
           {BLOCKS.map((b) => (
             <FilterChip key={b.id} active={blockFilter === b.id} onClick={() => setBlockFilter(b.id)}>
@@ -35,7 +38,7 @@ export function FieldChangeTimeline() {
         <div className="flex flex-col items-center justify-center gap-2 py-10 text-center">
           <History size={22} className="text-outline" />
           <p className="text-xs text-on-surface-variant">
-            Chưa có thay đổi hiện trường nào - dự án chưa ký hợp đồng.
+            {tr('Chưa có thay đổi hiện trường nào - dự án chưa ký hợp đồng.', 'No field changes yet - the project has not been contracted.')}
           </p>
         </div>
       ) : (
@@ -52,16 +55,16 @@ export function FieldChangeTimeline() {
                 <span>·</span>
                 <span>Block {c.block}</span>
                 <span>·</span>
-                <span>{c.discipline}</span>
+                <span>{disciplineLabel(c.discipline, language)}</span>
                 <Badge tone={fieldChangeStatusTone(c.modelStatus)} className="ml-auto">
-                  {c.modelStatus}
+                  {fieldChangeStatusLabel(c.modelStatus, language)}
                 </Badge>
               </div>
               <p className="text-sm text-on-surface">{c.description}</p>
               <div className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-[11px] text-on-surface-variant">
-                <span>Lý do: {c.reason}</span>
-                <span>Người báo: {c.reporter}</span>
-                <span>Ảnh hưởng KL: {c.quantityImpact}</span>
+                <span>{tr('Lý do', 'Reason')}: {c.reason}</span>
+                <span>{tr('Người báo', 'Reported by')}: {c.reporter}</span>
+                <span>{tr('Ảnh hưởng KL', 'Quantity impact')}: {c.quantityImpact}</span>
               </div>
             </div>
           </div>

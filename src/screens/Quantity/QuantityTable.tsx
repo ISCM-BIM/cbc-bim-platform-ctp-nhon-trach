@@ -3,6 +3,8 @@ import type { QuantityItem, QuantityStatus } from '../../data/quantities'
 import { Badge } from '../../components/common/Badge'
 import type { BadgeTone } from '../../components/common/Badge'
 import { formatNumber, formatVNDShort } from '../../utils/format'
+import { useLanguage } from '../../i18n/LanguageContext'
+import { quantityStatusLabel, unitLabel } from '../../i18n/enumLabels'
 
 function statusTone(status: QuantityStatus): BadgeTone {
   if (status === 'Chênh lệch lớn') return 'danger'
@@ -23,25 +25,28 @@ interface QuantityTableProps {
 }
 
 export function QuantityTable({ items, selectedId, onSelect }: QuantityTableProps) {
+  const { language, tr } = useLanguage()
   return (
     <div className="panel shrink-0 overflow-hidden">
       <div className="max-h-[560px] overflow-auto">
         <table className="w-full min-w-[1000px] text-left text-xs">
           <thead className="sticky top-0 z-10 border-b border-outline-variant bg-surface-container-lowest text-on-surface-variant">
             <tr>
-              <th className="px-3 py-3 font-medium">Mã</th>
-              <th className="px-3 py-3 font-medium">Tên công tác</th>
-              <th className="px-3 py-3 font-medium">ĐVT</th>
-              <th className="px-3 py-3 text-right font-medium">KL hợp đồng</th>
-              <th className="px-3 py-3 text-right font-medium">KL mô hình</th>
-              <th className="px-3 py-3 text-right font-medium">Chênh lệch</th>
-              <th className="px-3 py-3 text-right font-medium">Đơn giá</th>
-              <th className="px-3 py-3 text-right font-medium">Ảnh hưởng chi phí</th>
-              <th className="px-3 py-3 font-medium">Trạng thái</th>
+              <th className="px-3 py-3 font-medium">{tr('Mã', 'Code')}</th>
+              <th className="px-3 py-3 font-medium">{tr('Tên công tác', 'Work item')}</th>
+              <th className="px-3 py-3 font-medium">{tr('ĐVT', 'Unit')}</th>
+              <th className="px-3 py-3 text-right font-medium">{tr('KL hợp đồng', 'Contract qty')}</th>
+              <th className="px-3 py-3 text-right font-medium">{tr('KL mô hình', 'Model qty')}</th>
+              <th className="px-3 py-3 text-right font-medium">{tr('Chênh lệch', 'Variance')}</th>
+              <th className="px-3 py-3 text-right font-medium">{tr('Đơn giá', 'Unit price')}</th>
+              <th className="px-3 py-3 text-right font-medium">{tr('Ảnh hưởng chi phí', 'Cost impact')}</th>
+              <th className="px-3 py-3 font-medium">{tr('Trạng thái', 'Status')}</th>
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
+            {items.map((item) => {
+              const name = language === 'en' ? item.nameEn : item.name
+              return (
               <tr
                 key={item.id}
                 onClick={() => onSelect(item)}
@@ -50,10 +55,10 @@ export function QuantityTable({ items, selectedId, onSelect }: QuantityTableProp
                 }`}
               >
                 <td className="px-3 py-3 font-mono text-on-surface-variant">{item.id}</td>
-                <td className="max-w-[220px] truncate px-3 py-3 font-medium text-on-surface" title={item.name}>
-                  {item.name}
+                <td className="max-w-[220px] truncate px-3 py-3 font-medium text-on-surface" title={name}>
+                  {name}
                 </td>
-                <td className="px-3 py-3 text-on-surface-variant">{item.unit}</td>
+                <td className="px-3 py-3 text-on-surface-variant">{unitLabel(item.unit, language)}</td>
                 <td className="px-3 py-3 text-right tabular-nums">{formatNumber(item.contractQty)}</td>
                 <td className="px-3 py-3 text-right tabular-nums">{formatNumber(item.modelQty)}</td>
                 <td className="px-3 py-3 text-right tabular-nums">
@@ -77,20 +82,23 @@ export function QuantityTable({ items, selectedId, onSelect }: QuantityTableProp
                     {item.diffPercent}%
                   </span>
                 </td>
-                <td className="px-3 py-3 text-right tabular-nums text-on-surface-variant">{formatVNDShort(item.unitPrice)}</td>
+                <td className="px-3 py-3 text-right tabular-nums text-on-surface-variant">{formatVNDShort(item.unitPrice, language)}</td>
                 <td className="px-3 py-3 text-right tabular-nums font-medium text-on-surface">
                   {item.costImpact > 0 ? '+' : ''}
-                  {formatVNDShort(item.costImpact)}
+                  {formatVNDShort(item.costImpact, language)}
                 </td>
                 <td className="px-3 py-3">
-                  <Badge tone={statusTone(item.status)}>{item.status}</Badge>
+                  <Badge tone={statusTone(item.status)}>{quantityStatusLabel(item.status, language)}</Badge>
                 </td>
               </tr>
-            ))}
+              )
+            })}
           </tbody>
         </table>
         {items.length === 0 && (
-          <p className="px-4 py-8 text-center text-sm text-outline">Không có hạng mục phù hợp bộ lọc.</p>
+          <p className="px-4 py-8 text-center text-sm text-outline">
+            {tr('Không có hạng mục phù hợp bộ lọc.', 'No items match the current filters.')}
+          </p>
         )}
       </div>
     </div>

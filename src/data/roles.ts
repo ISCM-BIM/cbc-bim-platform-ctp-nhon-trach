@@ -17,6 +17,12 @@ export const ROLE_LABELS: Record<UserRole, string> = {
   bim_manager: 'Quản lý BIM',
 }
 
+export const ROLE_LABELS_EN: Record<UserRole, string> = {
+  contractor: 'Contractor Management',
+  investor: 'Investor',
+  bim_manager: 'BIM Manager',
+}
+
 export const ROLE_ORDER: UserRole[] = ['contractor', 'investor', 'bim_manager']
 
 export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
@@ -46,4 +52,15 @@ export const SCREEN_LABELS: Record<ScreenId, string> = {
   clash: 'Kiểm tra xung đột',
   asbuilt: 'Hoàn công & Thay đổi',
   assets: 'Tài sản & Vận hành',
+}
+
+export const SCREEN_LABELS_EN: Record<ScreenId, string> = {
+  dashboard: 'Overview',
+  model3d: '3D Model',
+  autodesk: 'Autodesk Viewer Model',
+  schedule: 'Construction Schedule',
+  quantity: 'Quantity & Cost',
+  clash: 'Clash Detection',
+  asbuilt: 'As-Built & Changes',
+  assets: 'Assets & Operations',
 }

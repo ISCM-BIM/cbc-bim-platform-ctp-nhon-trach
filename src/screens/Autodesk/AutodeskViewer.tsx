@@ -1,16 +1,18 @@
 import { ExternalLink, Boxes } from 'lucide-react'
 import { PARTNER_MODEL_LINKS } from '../../data/autodeskModels'
+import { useLanguage } from '../../i18n/LanguageContext'
 
 // Danh sách link Autodesk Viewer đối tác chia sẻ - xem giải thích đầy đủ (vì sao không nhúng
 // trực tiếp được) trong src/data/autodeskModels.ts. Mỗi model là 1 khối bấm được nguyên khối,
 // bấm vào là mở thẳng link ở tab mới - không có nút riêng bên trong.
 export function AutodeskViewer() {
+  const { language, tr } = useLanguage()
   return (
     <div className="flex h-full flex-col gap-4 overflow-y-auto p-6">
       {PARTNER_MODEL_LINKS.length === 0 ? (
         <div className="panel flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center">
           <Boxes size={28} className="text-outline" />
-          <p className="text-sm text-on-surface-variant">Chưa có model nào được chia sẻ.</p>
+          <p className="text-sm text-on-surface-variant">{tr('Chưa có model nào được chia sẻ.', 'No model has been shared yet.')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -30,7 +32,7 @@ export function AutodeskViewer() {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <p className="font-heading text-sm font-semibold text-on-surface">{m.name}</p>
+                  <p className="font-heading text-sm font-semibold text-on-surface">{language === 'en' ? m.nameEn : m.name}</p>
                   {m.isDemo && (
                     <span className="shrink-0 border border-status-warning/30 bg-status-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-status-warning">
                       Demo
@@ -38,7 +40,7 @@ export function AutodeskViewer() {
                   )}
                 </div>
                 {m.description && (
-                  <p className="mt-1.5 text-xs leading-relaxed text-on-surface-variant">{m.description}</p>
+                  <p className="mt-1.5 text-xs leading-relaxed text-on-surface-variant">{language === 'en' ? m.descriptionEn : m.description}</p>
                 )}
               </div>
             </a>

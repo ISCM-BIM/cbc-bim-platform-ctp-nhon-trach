@@ -12,6 +12,7 @@ export interface GalleryImage {
   id: string
   url: string
   caption: string
+  captionEn: string
 }
 
 const FILE_COUNT = 22
@@ -22,5 +23,6 @@ export const projectGallery: GalleryImage[] = Array.from({ length: FILE_COUNT },
     id: `GAL-${String(n).padStart(2, '0')}`,
     url: `${BASE}${String(n).padStart(2, '0')}.png`,
     caption: `Phối cảnh 3D ctpark Nhơn Trạch · Ảnh ${n}/${FILE_COUNT}`,
+    captionEn: `ctpark Nhon Trach 3D rendering · Image ${n}/${FILE_COUNT}`,
   }
 })

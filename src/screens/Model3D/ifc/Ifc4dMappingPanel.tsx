@@ -3,6 +3,7 @@ import { X, Download, Upload, RotateCcw } from 'lucide-react'
 import type { Ifc4dPlan } from '../../../ifc/types'
 import { groupKeyToString } from '../../../ifc/groupKey'
 import type { ManualOverride } from '../useIfcModel'
+import { useLanguage, type Language } from '../../../i18n/LanguageContext'
 
 interface Ifc4dMappingPanelProps {
   fileName: string
@@ -19,6 +20,7 @@ interface ExportedMapping {
 }
 
 export function Ifc4dMappingPanel({ fileName, plan, overrides, onSetOverride, onResetAll, onClose }: Ifc4dMappingPanelProps) {
+  const { language, tr } = useLanguage()
   const importRef = useRef<HTMLInputElement>(null)
 
   const handleExport = () => {
@@ -56,26 +58,28 @@ export function Ifc4dMappingPanel({ fileName, plan, overrides, onSetOverride, on
       <div className="panel flex max-h-[80vh] w-full max-w-2xl flex-col p-5" onClick={(e) => e.stopPropagation()}>
         <div className="mb-1 flex items-start justify-between gap-3">
           <div>
-            <p className="label-caps text-brand">Quản lý BIM</p>
-            <h2 className="font-heading text-lg font-semibold text-on-surface">Tinh chỉnh thanh trượt 4D</h2>
+            <p className="label-caps text-brand">{tr('Quản lý BIM', 'BIM Manager')}</p>
+            <h2 className="font-heading text-lg font-semibold text-on-surface">{tr('Tinh chỉnh thanh trượt 4D', 'Fine-tune the 4D slider')}</h2>
           </div>
           <button type="button" onClick={onClose} className="p-1 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface">
             <X size={18} />
           </button>
         </div>
         <p className="mb-4 text-xs leading-relaxed text-on-surface-variant">
-          Nguồn mốc tháng hiện tại: <b className="text-on-surface">{planSourceLabel(plan.source)}</b>. Sửa trực tiếp tháng bắt
-          đầu/kết thúc cho từng nhóm (tầng × bộ môn) bên dưới - xem trước ngay trên thanh trượt. Chỉ lưu trong phiên làm việc,
-          có thể xuất ra file JSON để dùng lại lần sau.
+          {tr('Nguồn mốc tháng hiện tại', 'Current month source')}: <b className="text-on-surface">{planSourceLabel(plan.source, language)}</b>.{' '}
+          {tr(
+            'Sửa trực tiếp tháng bắt đầu/kết thúc cho từng nhóm (tầng × bộ môn) bên dưới - xem trước ngay trên thanh trượt. Chỉ lưu trong phiên làm việc, có thể xuất ra file JSON để dùng lại lần sau.',
+            'Edit the start/end month for each group (storey × discipline) below directly - preview it right on the slider. Changes are session-only; export to a JSON file to reuse them later.',
+          )}
         </p>
 
         <div className="min-h-0 flex-1 overflow-y-auto border-t border-outline-variant">
           <table className="w-full text-left text-xs">
             <thead className="sticky top-0 border-b border-outline-variant bg-surface-container-lowest text-on-surface-variant">
               <tr>
-                <th className="py-2 pr-2 font-medium">Nhóm (tầng × bộ môn × giai đoạn)</th>
-                <th className="w-24 py-2 pr-2 font-medium">Bắt đầu (tháng)</th>
-                <th className="w-24 py-2 pr-2 font-medium">Kết thúc (tháng)</th>
+                <th className="py-2 pr-2 font-medium">{tr('Nhóm (tầng × bộ môn × giai đoạn)', 'Group (storey × discipline × phase)')}</th>
+                <th className="w-24 py-2 pr-2 font-medium">{tr('Bắt đầu (tháng)', 'Start (month)')}</th>
+                <th className="w-24 py-2 pr-2 font-medium">{tr('Kết thúc (tháng)', 'End (month)')}</th>
                 <th className="w-10" />
               </tr>
             </thead>
@@ -112,7 +116,7 @@ export function Ifc4dMappingPanel({ fileName, plan, overrides, onSetOverride, on
                       {hasOverride && (
                         <button
                           type="button"
-                          title="Đặt lại nhóm này"
+                          title={tr('Đặt lại nhóm này', 'Reset this group')}
                           onClick={() => onSetOverride(key, null)}
                           className="p-1 text-on-surface-variant hover:text-brand"
                         >
@@ -129,7 +133,7 @@ export function Ifc4dMappingPanel({ fileName, plan, overrides, onSetOverride, on
 
         <div className="mt-4 flex items-center justify-between gap-2 border-t border-outline-variant pt-4">
           <button type="button" onClick={onResetAll} className="btn-ghost text-xs">
-            Đặt lại toàn bộ
+            {tr('Đặt lại toàn bộ', 'Reset all')}
           </button>
           <div className="flex gap-2">
             <input
@@ -144,10 +148,10 @@ export function Ifc4dMappingPanel({ fileName, plan, overrides, onSetOverride, on
               }}
             />
             <button type="button" onClick={() => importRef.current?.click()} className="btn-secondary !px-3 !py-2 text-xs">
-              <Upload size={13} /> Nhập JSON
+              <Upload size={13} /> {tr('Nhập JSON', 'Import JSON')}
             </button>
             <button type="button" onClick={handleExport} className="btn-primary !px-3 !py-2 text-xs">
-              <Download size={13} /> Xuất JSON
+              <Download size={13} /> {tr('Xuất JSON', 'Export JSON')}
             </button>
           </div>
         </div>
@@ -156,7 +160,12 @@ export function Ifc4dMappingPanel({ fileName, plan, overrides, onSetOverride, on
   )
 }
 
-function planSourceLabel(source: Ifc4dPlan['source']): string {
+function planSourceLabel(source: Ifc4dPlan['source'], language: Language): string {
+  if (language === 'en') {
+    if (source === 'native') return 'native 4D data in the IFC file'
+    if (source === 'manual') return 'manually fine-tuned'
+    return 'from the real construction schedule (dates matched to corresponding work items)'
+  }
   if (source === 'native') return 'dữ liệu 4D gốc trong file IFC'
   if (source === 'manual') return 'đã tinh chỉnh thủ công'
   return 'theo tiến độ thi công thật (khớp ngày theo hạng mục tương ứng)'

@@ -2,9 +2,11 @@ import { Layers, ScissorsLineDashed, Check, Wind } from 'lucide-react'
 import type { Discipline } from '../../../types'
 import { DISCIPLINE_COLORS, DISCIPLINES } from '../../../data/constants'
 import type { IfcStorey } from '../../../ifc/types'
-import { PHASE_COLORS, PHASE_LABEL, type ConstructionPhase } from '../../../ifc/constructionPhase'
-import { MEP_SYSTEM_COLORS, MEP_SYSTEM_LABEL, MEP_SYSTEM_CATEGORIES, type MepSystemCategory } from '../../../ifc/mepSystem'
+import { PHASE_COLORS, type ConstructionPhase } from '../../../ifc/constructionPhase'
+import { MEP_SYSTEM_COLORS, MEP_SYSTEM_CATEGORIES, type MepSystemCategory } from '../../../ifc/mepSystem'
 import { formatNumber } from '../../../utils/format'
+import { useLanguage } from '../../../i18n/LanguageContext'
+import { constructionPhaseLabel, disciplineLabel, mepSystemLabel } from '../../../i18n/enumLabels'
 
 // Thứ tự hiển thị chú giải màu giai đoạn - đúng trình tự thi công thật (khớp SEQUENCE trong
 // ifc4d.ts), không lấy trực tiếp Object.keys(PHASE_COLORS) để không phụ thuộc ngầm vào thứ tự
@@ -50,6 +52,7 @@ export function IfcFilterPanel({
   onCutPositionChange,
   cutRange,
 }: IfcFilterPanelProps) {
+  const { language, tr } = useLanguage()
   const presentMepSystems = MEP_SYSTEM_CATEGORIES.filter((c) => (mepSystemCounts[c] ?? 0) > 0)
   // "Tất cả" bao gồm cả cấu kiện không gán được vào tầng nào (storeyExpressID = null - hạ
   // tầng/sân bãi thường rơi vào đây) - phải liệt kê rõ null trong tập đầy đủ, nếu không lần
@@ -74,13 +77,13 @@ export function IfcFilterPanel({
           {fileName}
         </p>
         <p className="mt-0.5 text-[11px] text-on-surface-variant">
-          {formatNumber(elementCount)} cấu kiện · {formatNumber(triangleCount)} tam giác
+          {formatNumber(elementCount)} {tr('cấu kiện', 'elements')} · {formatNumber(triangleCount)} {tr('tam giác', 'triangles')}
         </p>
       </div>
 
       <div>
         <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
-          <Layers size={13} /> Tầng ({storeys.length})
+          <Layers size={13} /> {tr('Tầng', 'Storeys')} ({storeys.length})
         </p>
         <div className="space-y-1 max-h-40 overflow-y-auto pr-1">
           <button
@@ -90,7 +93,7 @@ export function IfcFilterPanel({
               visibleStoreys === 'all' ? 'bg-brand text-white' : 'bg-surface-container-high text-on-surface-variant hover:text-on-surface'
             }`}
           >
-            Tất cả các tầng
+            {tr('Tất cả các tầng', 'All storeys')}
           </button>
           {[...storeys].reverse().map((s) => (
             <button
@@ -112,7 +115,10 @@ export function IfcFilterPanel({
           <button
             type="button"
             onClick={() => toggleStorey(null)}
-            title="Cấu kiện không xác định được tầng chứa (thường là hạ tầng, sân bãi...)"
+            title={tr(
+              'Cấu kiện không xác định được tầng chứa (thường là hạ tầng, sân bãi...)',
+              'Elements that could not be assigned to a storey (usually infrastructure, paving...)',
+            )}
             className={`block w-full px-2 py-1.5 text-left text-xs font-medium transition-colors ${
               isStoreySelected(null) && visibleStoreys !== 'all'
                 ? 'bg-brand text-white'
@@ -121,13 +127,13 @@ export function IfcFilterPanel({
                   : 'bg-surface-container-high text-on-surface-variant hover:text-on-surface'
             }`}
           >
-            Ngoài tầng (hạ tầng, sân bãi...)
+            {tr('Ngoài tầng (hạ tầng, sân bãi...)', 'Outside storeys (infrastructure, paving...)')}
           </button>
         </div>
       </div>
 
       <div>
-        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-on-surface-variant">Bộ môn hiển thị</p>
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-on-surface-variant">{tr('Bộ môn hiển thị', 'Visible disciplines')}</p>
         <div className="space-y-1.5">
           {DISCIPLINES.map((d) => (
             <label
@@ -141,7 +147,7 @@ export function IfcFilterPanel({
               >
                 {visible[d] && <Check size={11} strokeWidth={3} className="text-on-surface" />}
               </span>
-              {d}
+              {disciplineLabel(d, language)}
             </label>
           ))}
         </div>
@@ -150,7 +156,7 @@ export function IfcFilterPanel({
       {presentMepSystems.length > 0 && (
         <div>
           <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
-            <Wind size={13} /> Hệ thống MEP
+            <Wind size={13} /> {tr('Hệ thống MEP', 'MEP systems')}
           </p>
           <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
             {presentMepSystems.map((cat) => (
@@ -173,7 +179,7 @@ export function IfcFilterPanel({
                 >
                   {visibleMepSystems[cat] && <Check size={9} strokeWidth={3} className="text-on-surface" />}
                 </span>
-                <span className="flex-1">{MEP_SYSTEM_LABEL[cat]}</span>
+                <span className="flex-1">{mepSystemLabel(cat, language)}</span>
                 <span className="text-[10px] opacity-70">{formatNumber(mepSystemCounts[cat] ?? 0)}</span>
               </label>
             ))}
@@ -183,7 +189,7 @@ export function IfcFilterPanel({
 
       <div>
         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
-          Màu theo giai đoạn (Kết cấu/Kiến trúc)
+          {tr('Màu theo giai đoạn (Kết cấu/Kiến trúc)', 'Color by phase (Structural/Architecture)')}
         </p>
         {/* Chú giải, không phải bộ lọc - Kết cấu/Kiến trúc tô theo giai đoạn thi công (xem
             IfcModelView.tsx) để phân biệt cọc/móng/khung/sàn/bao che/hoàn thiện rõ hơn là chỉ 2
@@ -192,7 +198,7 @@ export function IfcFilterPanel({
           {PHASE_LEGEND_ORDER.map((phase) => (
             <div key={phase} className="flex items-center gap-2.5 px-2.5 py-1">
               <span className="h-3 w-3 shrink-0" style={{ backgroundColor: PHASE_COLORS[phase] }} />
-              {PHASE_LABEL[phase]}
+              {constructionPhaseLabel(phase, language)}
             </div>
           ))}
         </div>
@@ -201,7 +207,7 @@ export function IfcFilterPanel({
       <div>
         <label className="mb-2 flex cursor-pointer items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
           <input type="checkbox" checked={cutEnabled} onChange={onToggleCut} className="accent-brand" />
-          <ScissorsLineDashed size={13} /> Chế độ cắt mặt cắt
+          <ScissorsLineDashed size={13} /> {tr('Chế độ cắt mặt cắt', 'Section cut mode')}
         </label>
         {cutEnabled && (
           <input
@@ -217,9 +223,9 @@ export function IfcFilterPanel({
       </div>
 
       <div className="mt-auto space-y-1.5 border-t border-outline-variant pt-3 text-[11px] leading-relaxed text-on-surface-variant">
-        <p>Chuột trái: xoay · Cuộn: phóng to/thu nhỏ</p>
-        <p>Chuột phải kéo: di chuyển góc nhìn</p>
-        <p>Bấm vào cấu kiện để xem thuộc tính IFC</p>
+        <p>{tr('Chuột trái: xoay · Cuộn: phóng to/thu nhỏ', 'Left-click: rotate · Scroll: zoom in/out')}</p>
+        <p>{tr('Chuột phải kéo: di chuyển góc nhìn', 'Right-click drag: pan the view')}</p>
+        <p>{tr('Bấm vào cấu kiện để xem thuộc tính IFC', 'Click an element to view its IFC properties')}</p>
       </div>
     </aside>
   )

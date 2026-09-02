@@ -16,6 +16,8 @@ import {
 } from '../data/constants'
 import { addDays, clamp } from './random'
 import { formatDateShort } from './format'
+import type { Language } from '../i18n/LanguageContext'
+import { quantityGroupLabel } from '../i18n/enumLabels'
 
 // Chỉ liệt kê các cặp bộ môn THỰC SỰ xuất hiện trong dữ liệu xung đột (tối đa bằng số màu
 // trong CHART_PALETTE), sắp theo alphabet để cố định - gán màu theo tên (định danh), không
@@ -113,9 +115,9 @@ export function getClashWeeklyTrend(weeks = 12): Array<{ label: string; phat_hie
   return out
 }
 
-export function getBlockProgressData() {
+export function getBlockProgressData(language: Language = 'vi') {
   return BLOCKS.map((b) => ({
-    block: b.name,
+    block: language === 'en' ? (b.nameEn ?? b.name) : b.name,
     hoan_thanh: BLOCK_PROGRESS[b.id],
     con_lai: 100 - BLOCK_PROGRESS[b.id],
   }))
@@ -179,11 +181,11 @@ export function getFlaggedQuantityCount(): number {
 // hình BIM thay vì bóc tay truyền thống - chỉ số phản ánh mức độ trưởng thành quy trình.
 export const MODEL_TAKEOFF_COVERAGE = 87
 
-export function getQuantityByGroup(): Array<{ group: string; hop_dong: number; mo_hinh: number }> {
+export function getQuantityByGroup(language: Language = 'vi'): Array<{ group: string; hop_dong: number; mo_hinh: number }> {
   return QUANTITY_GROUPS.map((g) => {
     const items = quantityItems.filter((i) => i.group === g)
     return {
-      group: g,
+      group: quantityGroupLabel(g, language),
       hop_dong: items.reduce((s, i) => s + i.contractQty * i.unitPrice, 0),
       mo_hinh: items.reduce((s, i) => s + i.modelQty * i.unitPrice, 0),
     }

@@ -1,4 +1,5 @@
 import { PlayCircle, Play, Pause, HardHat } from 'lucide-react'
+import { useLanguage } from '../../i18n/LanguageContext'
 
 interface MonthSliderProps {
   month: number
@@ -42,6 +43,7 @@ export function MonthSlider({
   onChangeSpeed,
   speedOptions,
 }: MonthSliderProps) {
+  const { tr } = useLanguage()
   const marks = marksProp ?? Array.from({ length: Math.max(2, Math.round(max - min) + 1) }, (_, i) => min + i)
 
   return (
@@ -56,7 +58,7 @@ export function MonthSlider({
       {activityLabel && (
         <p className="mb-2 flex items-center gap-1.5 text-xs text-on-surface">
           <HardHat size={13} className="shrink-0 text-brand" />
-          Đang thi công: <span className="font-semibold">{activityLabel}</span>
+          {tr('Đang thi công', 'Currently building')}: <span className="font-semibold">{activityLabel}</span>
         </p>
       )}
 
@@ -64,20 +66,20 @@ export function MonthSlider({
         <button
           type="button"
           onClick={onTogglePlay}
-          aria-label={isPlaying ? 'Tạm dừng' : 'Chạy tự động'}
-          title={isPlaying ? 'Tạm dừng' : 'Chạy tự động tiến độ thi công'}
+          aria-label={isPlaying ? tr('Tạm dừng', 'Pause') : tr('Chạy tự động', 'Play')}
+          title={isPlaying ? tr('Tạm dừng', 'Pause') : tr('Chạy tự động tiến độ thi công', 'Auto-play construction progress')}
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-white transition-colors hover:bg-brand/90"
         >
           {isPlaying ? <Pause size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" className="ml-0.5" />}
         </button>
 
-        <div className="flex shrink-0 items-center" title="Tốc độ chạy tự động">
+        <div className="flex shrink-0 items-center" title={tr('Tốc độ chạy tự động', 'Playback speed')}>
           {speedOptions.map((s) => (
             <button
               key={s}
               type="button"
               onClick={() => onChangeSpeed(s)}
-              aria-label={`Tốc độ ${s}x`}
+              aria-label={`${tr('Tốc độ', 'Speed')} ${s}x`}
               className={`px-1.5 py-1 text-[10px] font-semibold transition-colors ${
                 s === playbackSpeed
                   ? 'bg-brand text-white'

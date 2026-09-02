@@ -3,8 +3,10 @@ import { ChevronLeft, ChevronRight, Wrench } from 'lucide-react'
 import { equipment } from '../../data/equipment'
 import { CURRENT_DATE } from '../../data/constants'
 import { formatMonthLabel } from '../../utils/format'
+import { useLanguage } from '../../i18n/LanguageContext'
 
 const WEEKDAY_LABELS = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']
+const WEEKDAY_LABELS_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 interface CalendarTask {
   equipmentId: string
@@ -13,6 +15,8 @@ interface CalendarTask {
 }
 
 export function MaintenanceCalendar() {
+  const { language, tr } = useLanguage()
+  const weekdayLabels = language === 'en' ? WEEKDAY_LABELS_EN : WEEKDAY_LABELS
   const [cursor, setCursor] = useState(() => new Date(CURRENT_DATE.getFullYear(), CURRENT_DATE.getMonth(), 1))
 
   const tasksByDay = useMemo(() => {
@@ -41,7 +45,7 @@ export function MaintenanceCalendar() {
   return (
     <div className="panel p-4">
       <div className="mb-3 flex items-center justify-between">
-        <p className="text-sm font-semibold text-on-surface">Lịch bảo trì</p>
+        <p className="text-sm font-semibold text-on-surface">{tr('Lịch bảo trì', 'Maintenance calendar')}</p>
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -50,7 +54,7 @@ export function MaintenanceCalendar() {
           >
             <ChevronLeft size={15} />
           </button>
-          <span className="w-24 text-center text-xs font-medium text-on-surface-variant">{formatMonthLabel(cursor)}</span>
+          <span className="w-24 text-center text-xs font-medium text-on-surface-variant">{formatMonthLabel(cursor, language)}</span>
           <button
             type="button"
             onClick={() => setCursor((c) => new Date(c.getFullYear(), c.getMonth() + 1, 1))}
@@ -62,7 +66,7 @@ export function MaintenanceCalendar() {
       </div>
 
       <div className="grid grid-cols-7 gap-1 text-center text-[10px] text-on-surface-variant">
-        {WEEKDAY_LABELS.map((w) => (
+        {weekdayLabels.map((w) => (
           <div key={w} className="py-1">
             {w}
           </div>
@@ -97,7 +101,7 @@ export function MaintenanceCalendar() {
           )
         })}
       </div>
-      <p className="mt-3 text-[11px] text-on-surface-variant">{totalTasks} mốc bảo trì trong tháng này</p>
+      <p className="mt-3 text-[11px] text-on-surface-variant">{totalTasks} {tr('mốc bảo trì trong tháng này', 'maintenance tasks this month')}</p>
     </div>
   )
 }

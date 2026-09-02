@@ -1,7 +1,9 @@
 export interface PartnerModelLink {
   id: string
   name: string
+  nameEn: string
   description: string
+  descriptionEn: string
   url: string
   isDemo?: boolean
 }
@@ -15,7 +17,9 @@ export const PARTNER_MODEL_LINKS: PartnerModelLink[] = [
   {
     id: 'CTP-NHONTRACH-RBF6',
     name: 'Mô hình RBF6 - ctpark Nhơn Trạch',
+    nameEn: 'RBF6 Model - ctpark Nhon Trach',
     description: 'Model chia sẻ qua Autodesk Viewer.',
+    descriptionEn: 'Model shared via Autodesk Viewer.',
     url: 'https://autode.sk/4hTfGnj',
   },
 ]

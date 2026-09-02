@@ -3,6 +3,8 @@ import type { Clash } from '../../types'
 import { Badge } from '../../components/common/Badge'
 import { clashSeverityTone, clashStatusTone } from '../../utils/tone'
 import { formatDate, formatVNDShort } from '../../utils/format'
+import { useLanguage } from '../../i18n/LanguageContext'
+import { clashStatusLabel } from '../../i18n/enumLabels'
 
 export type SortKey = 'id' | 'severity' | 'block' | 'estimatedCost' | 'status' | 'dueDate'
 export interface SortState {
@@ -18,16 +20,17 @@ interface ClashTableProps {
   onSortChange: (sort: SortState) => void
 }
 
-const COLUMNS: Array<{ key: SortKey; label: string; align?: 'right' }> = [
-  { key: 'id', label: 'Mã' },
-  { key: 'severity', label: 'Mức độ' },
-  { key: 'block', label: 'Block' },
-  { key: 'estimatedCost', label: 'Chi phí ước tính', align: 'right' },
-  { key: 'status', label: 'Trạng thái' },
-  { key: 'dueDate', label: 'Hạn xử lý' },
+const COLUMNS: Array<{ key: SortKey; label: string; labelEn: string; align?: 'right' }> = [
+  { key: 'id', label: 'Mã', labelEn: 'Code' },
+  { key: 'severity', label: 'Mức độ', labelEn: 'Severity' },
+  { key: 'block', label: 'Block', labelEn: 'Block' },
+  { key: 'estimatedCost', label: 'Chi phí ước tính', labelEn: 'Estimated cost', align: 'right' },
+  { key: 'status', label: 'Trạng thái', labelEn: 'Status' },
+  { key: 'dueDate', label: 'Hạn xử lý', labelEn: 'Due date' },
 ]
 
 export function ClashTable({ items, selectedId, onSelect, sort, onSortChange }: ClashTableProps) {
+  const { language, tr } = useLanguage()
   const toggleSort = (key: SortKey) => {
     if (sort.key === key) {
       onSortChange({ key, direction: sort.direction === 'asc' ? 'desc' : 'asc' })
@@ -49,7 +52,7 @@ export function ClashTable({ items, selectedId, onSelect, sort, onSortChange }: 
                     onClick={() => toggleSort(col.key)}
                     className={`flex items-center gap-1 hover:text-on-surface ${col.align === 'right' ? 'ml-auto' : ''}`}
                   >
-                    {col.label}
+                    {language === 'en' ? col.labelEn : col.label}
                     {sort.key === col.key ? (
                       sort.direction === 'asc' ? (
                         <ArrowUp size={11} />
@@ -62,8 +65,8 @@ export function ClashTable({ items, selectedId, onSelect, sort, onSortChange }: 
                   </button>
                 </th>
               ))}
-              <th className="px-3 py-2.5 font-medium">Mô tả</th>
-              <th className="px-3 py-2.5 font-medium">Phụ trách</th>
+              <th className="px-3 py-2.5 font-medium">{tr('Mô tả', 'Description')}</th>
+              <th className="px-3 py-2.5 font-medium">{tr('Phụ trách', 'Assignee')}</th>
             </tr>
           </thead>
           <tbody>
@@ -81,10 +84,10 @@ export function ClashTable({ items, selectedId, onSelect, sort, onSortChange }: 
                 </td>
                 <td className="px-3 py-2.5">{c.block}</td>
                 <td className="px-3 py-2.5 text-right tabular-nums text-on-surface">
-                  {formatVNDShort(c.estimatedCost)}
+                  {formatVNDShort(c.estimatedCost, language)}
                 </td>
                 <td className="px-3 py-2.5">
-                  <Badge tone={clashStatusTone(c.status)}>{c.status}</Badge>
+                  <Badge tone={clashStatusTone(c.status)}>{clashStatusLabel(c.status, language)}</Badge>
                 </td>
                 <td className="whitespace-nowrap px-3 py-2.5 text-on-surface-variant">{formatDate(c.dueDate)}</td>
                 <td className="max-w-xs truncate px-3 py-2.5 text-on-surface-variant" title={c.description}>
@@ -96,7 +99,9 @@ export function ClashTable({ items, selectedId, onSelect, sort, onSortChange }: 
           </tbody>
         </table>
         {items.length === 0 && (
-          <p className="px-4 py-8 text-center text-sm text-on-surface-variant">Không có xung đột phù hợp bộ lọc.</p>
+          <p className="px-4 py-8 text-center text-sm text-on-surface-variant">
+            {tr('Không có xung đột phù hợp bộ lọc.', 'No clashes match the current filters.')}
+          </p>
         )}
       </div>
     </div>

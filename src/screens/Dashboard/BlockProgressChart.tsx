@@ -2,9 +2,11 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Toolti
 import { getBlockProgressData } from '../../utils/metrics'
 import { STATUS_COLORS } from '../../data/constants'
 import { ChartTooltip } from '../../components/common/ChartTooltip'
+import { useLanguage } from '../../i18n/LanguageContext'
 
 export function BlockProgressChart() {
-  const data = getBlockProgressData()
+  const { language, tr } = useLanguage()
+  const data = getBlockProgressData(language)
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -32,8 +34,8 @@ export function BlockProgressChart() {
           wrapperStyle={{ fontSize: 12, color: '#42474f' }}
           formatter={(value: string) => <span className="text-on-surface-variant">{value}</span>}
         />
-        <Bar dataKey="hoan_thanh" stackId="a" name="Đã hoàn thành" fill={STATUS_COLORS.info} radius={[0, 0, 0, 0]} isAnimationActive={false} />
-        <Bar dataKey="con_lai" stackId="a" name="Còn lại" fill="#dbdad9" radius={[4, 4, 0, 0]} isAnimationActive={false} />
+        <Bar dataKey="hoan_thanh" stackId="a" name={tr('Đã hoàn thành', 'Completed')} fill={STATUS_COLORS.info} radius={[0, 0, 0, 0]} isAnimationActive={false} />
+        <Bar dataKey="con_lai" stackId="a" name={tr('Còn lại', 'Remaining')} fill="#dbdad9" radius={[4, 4, 0, 0]} isAnimationActive={false} />
       </BarChart>
     </ResponsiveContainer>
   )

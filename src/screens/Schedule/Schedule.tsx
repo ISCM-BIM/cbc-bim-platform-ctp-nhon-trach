@@ -6,6 +6,8 @@ import { GanttChart } from './GanttChart'
 import { ScheduleTable } from './ScheduleTable'
 import { SitePhotoGrid } from './SitePhotoGrid'
 import { computeVisibleRows, defaultCollapsedSet } from './scheduleTree'
+import { useLanguage } from '../../i18n/LanguageContext'
+import { disciplineLabel } from '../../i18n/enumLabels'
 
 type BlockFilter = 'all' | BlockId
 type DisciplineFilter = 'all' | Discipline
@@ -15,6 +17,7 @@ type DisciplineFilter = 'all' | Discipline
 const DISPLAY_ITEMS = scheduleItems.filter((it) => it.level > 0)
 
 export function Schedule() {
+  const { language, tr } = useLanguage()
   const [blockFilter, setBlockFilter] = useState<BlockFilter>('all')
   const [disciplineFilter, setDisciplineFilter] = useState<DisciplineFilter>('all')
   const [collapsed, setCollapsed] = useState<Set<string>>(() => defaultCollapsedSet(DISPLAY_ITEMS))
@@ -47,9 +50,9 @@ export function Schedule() {
   return (
     <div className="flex flex-col gap-4 p-6">
       <div className="flex flex-wrap items-center gap-3 panel p-3">
-        <FilterGroup label="Lọc theo block">
+        <FilterGroup label={tr('Lọc theo block', 'Filter by block')}>
           <FilterChip active={blockFilter === 'all'} onClick={() => setBlockFilter('all')}>
-            Tất cả
+            {tr('Tất cả', 'All')}
           </FilterChip>
           {BLOCKS.map((b) => (
             <FilterChip key={b.id} active={blockFilter === b.id} onClick={() => setBlockFilter(b.id)}>
@@ -57,31 +60,31 @@ export function Schedule() {
             </FilterChip>
           ))}
         </FilterGroup>
-        <FilterGroup label="Bộ môn">
+        <FilterGroup label={tr('Bộ môn', 'Discipline')}>
           <FilterChip active={disciplineFilter === 'all'} onClick={() => setDisciplineFilter('all')}>
-            Tất cả
+            {tr('Tất cả', 'All')}
           </FilterChip>
           {DISCIPLINES.map((d) => (
             <FilterChip key={d} active={disciplineFilter === d} onClick={() => setDisciplineFilter(d)}>
-              {d}
+              {disciplineLabel(d, language)}
             </FilterChip>
           ))}
         </FilterGroup>
         <div className="ml-auto flex items-center gap-3 text-xs text-on-surface-variant">
           <span>
-            {leafCount} hạng mục thi công · {DISPLAY_ITEMS.length} dòng WBS đầy đủ theo hồ sơ MS Project
+            {leafCount} {tr('hạng mục thi công', 'work items')} · {DISPLAY_ITEMS.length} {tr('dòng WBS đầy đủ theo hồ sơ MS Project', 'full WBS lines from the MS Project source')}
           </span>
           {!filterActive && (
             <>
               <button type="button" onClick={() => setCollapsed(new Set())} className="btn-ghost">
-                Mở hết
+                {tr('Mở hết', 'Expand all')}
               </button>
               <button
                 type="button"
                 onClick={() => setCollapsed(defaultCollapsedSet(DISPLAY_ITEMS))}
                 className="btn-ghost"
               >
-                Thu gọn mặc định
+                {tr('Thu gọn mặc định', 'Collapse to default')}
               </button>
             </>
           )}

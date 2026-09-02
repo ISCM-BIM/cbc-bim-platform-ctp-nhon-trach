@@ -5,6 +5,7 @@ import { parseIfcFile, computeModelBounds, closeIfcModel, InvalidIfcFileError } 
 import { detectNativeSchedule, buildSchedulePlan, applyManualOverrides, DAYS_PER_MONTH } from '../../ifc/ifc4d'
 import { realDayRangeForWbs } from '../../ifc/realScheduleMapping'
 import type { ParsedIfcModel, Ifc4dPlan, IfcParseProgress } from '../../ifc/types'
+import { useLanguage } from '../../i18n/LanguageContext'
 
 // Khung thanh trượt 4D khớp đúng khoảng ngày thi công thật của RBF6 (mã "4.3" trong
 // data/schedule.ts - model IFC hiện tại chỉ dựng riêng RBF6, xem ghi chú đầu
@@ -25,6 +26,7 @@ export interface ManualOverride {
 }
 
 export function useIfcModel() {
+  const { tr } = useLanguage()
   const [status, setStatus] = useState<IfcLoadStatus>('idle')
   const [progress, setProgress] = useState<IfcParseProgress | null>(null)
   const [model, setModel] = useState<ParsedIfcModel | null>(null)
@@ -44,12 +46,20 @@ export function useIfcModel() {
 
     if (!file.name.toLowerCase().endsWith('.ifc')) {
       setStatus('error')
-      setError(`"${file.name}" không phải file .ifc. Hãy chọn file IFC xuất từ Revit (File → Export → IFC).`)
+      setError(
+        tr(
+          `"${file.name}" không phải file .ifc. Hãy chọn file IFC xuất từ Revit (File → Export → IFC).`,
+          `"${file.name}" is not an .ifc file. Please choose an IFC file exported from Revit (File → Export → IFC).`,
+        ),
+      )
       return
     }
     if (file.size > MAX_RECOMMENDED_BYTES) {
       setSizeWarning(
-        `File khá lớn (${(file.size / 1024 / 1024).toFixed(0)}MB) - quá trình đọc có thể mất vài phút và làm chậm trình duyệt vì chạy hoàn toàn phía client.`,
+        tr(
+          `File khá lớn (${(file.size / 1024 / 1024).toFixed(0)}MB) - quá trình đọc có thể mất vài phút và làm chậm trình duyệt vì chạy hoàn toàn phía client.`,
+          `This file is quite large (${(file.size / 1024 / 1024).toFixed(0)}MB) - parsing may take a few minutes and slow down the browser since it all runs client-side.`,
+        ),
       )
     }
 
@@ -58,7 +68,12 @@ export function useIfcModel() {
       if (activeModelID.current != null) closeIfcModel(ifcApi, activeModelID.current)
       const parsed = await parseIfcFile(ifcApi, file, setProgress)
       if (parsed.groups.length === 0) {
-        throw new InvalidIfcFileError('Không tìm thấy hình học nào trong file - kiểm tra lại file IFC có được xuất kèm hình học (không chỉ dữ liệu thuộc tính).')
+        throw new InvalidIfcFileError(
+          tr(
+            'Không tìm thấy hình học nào trong file - kiểm tra lại file IFC có được xuất kèm hình học (không chỉ dữ liệu thuộc tính).',
+            'No geometry found in this file - check that the IFC file was exported with geometry included (not just property data).',
+          ),
+        )
       }
       const native = await detectNativeSchedule(ifcApi, parsed.modelID, parsed.groups)
       const plan = native ?? buildSchedulePlan(parsed.groups, parsed.storeys, SCHEDULE_MIN_MONTH, SCHEDULE_MAX_MONTH)
@@ -69,9 +84,13 @@ export function useIfcModel() {
       setStatus('ready')
     } catch (err) {
       setStatus('error')
-      setError(err instanceof Error ? err.message : 'Không đọc được file IFC - file có thể bị hỏng hoặc không đúng chuẩn.')
+      setError(
+        err instanceof Error
+          ? err.message
+          : tr('Không đọc được file IFC - file có thể bị hỏng hoặc không đúng chuẩn.', 'Could not read the IFC file - it may be corrupted or non-standard.'),
+      )
     }
-  }, [])
+  }, [tr])
 
   /** Tải file IFC đã đóng gói sẵn trong app (public/) thay vì chờ người dùng chọn file - dùng
    * cho trường hợp nền tảng gắn cứng vào 1 dự án thật duy nhất. */
@@ -83,16 +102,16 @@ export function useIfcModel() {
       setProgress({ stage: 'fetching' })
       try {
         const res = await fetch(url)
-        if (!res.ok) throw new Error(`Không tải được file mô hình (HTTP ${res.status}).`)
+        if (!res.ok) throw new Error(tr(`Không tải được file mô hình (HTTP ${res.status}).`, `Could not download the model file (HTTP ${res.status}).`))
         const blob = await res.blob()
         const file = new File([blob], fileName)
         await load(file)
       } catch (err) {
         setStatus('error')
-        setError(err instanceof Error ? err.message : 'Không tải được file mô hình.')
+        setError(err instanceof Error ? err.message : tr('Không tải được file mô hình.', 'Could not download the model file.'))
       }
     },
-    [load],
+    [load, tr],
   )
 
   const clear = useCallback(() => {

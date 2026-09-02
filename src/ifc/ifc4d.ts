@@ -5,6 +5,8 @@ import { groupKeyToString } from './groupKey'
 import { PHASE_LABEL } from './constructionPhase'
 import { MEP_SYSTEM_LABEL } from './mepSystem'
 import { realDayRangeForGroup } from './realScheduleMapping'
+import type { Language } from '../i18n/LanguageContext'
+import { constructionPhaseLabel, disciplineLabel } from '../i18n/enumLabels'
 
 const MS_PER_MONTH = 1000 * 60 * 60 * 24 * 30.44
 
@@ -236,7 +238,12 @@ export interface CurrentActivity {
  * "Hệ thống MEP" chung cho dễ theo dõi. Kết cấu/Kiến trúc vẫn hiện đúng giai đoạn (số lượng giai
  * đoạn ít, không bị vấn đề tương tự) vì đây mới là thông tin người xem thường quan tâm nhất.
  */
-export function describeCurrentActivity(plan: Ifc4dPlan, month: number, storeys: IfcStorey[]): CurrentActivity | null {
+export function describeCurrentActivity(
+  plan: Ifc4dPlan,
+  month: number,
+  storeys: IfcStorey[],
+  language: Language = 'vi',
+): CurrentActivity | null {
   let best: Ifc4dGroupSchedule | null = null
   for (const s of plan.schedules) {
     if (s.startMonth > month) continue
@@ -245,15 +252,17 @@ export function describeCurrentActivity(plan: Ifc4dPlan, month: number, storeys:
   if (!best) return null
 
   const storey = storeys.find((st) => st.expressID === best!.key.storeyExpressID)
-  const storeyName = best.key.storeyExpressID === null ? 'Toàn công trình' : (storey?.name ?? 'Không rõ tầng')
+  const wholeBuilding = language === 'en' ? 'Whole building' : 'Toàn công trình'
+  const unknownStorey = language === 'en' ? 'Unknown storey' : 'Không rõ tầng'
+  const storeyName = best.key.storeyExpressID === null ? wholeBuilding : (storey?.name ?? unknownStorey)
 
   let activityLabel: string
   if (best.key.discipline === 'MEP') {
-    activityLabel = 'Hệ thống MEP'
+    activityLabel = language === 'en' ? 'MEP systems' : 'Hệ thống MEP'
   } else if (best.key.phase !== 'khac') {
-    activityLabel = PHASE_LABEL[best.key.phase]
+    activityLabel = constructionPhaseLabel(best.key.phase, language)
   } else {
-    activityLabel = best.key.discipline
+    activityLabel = disciplineLabel(best.key.discipline, language)
   }
 
   return { storeyName, activityLabel }

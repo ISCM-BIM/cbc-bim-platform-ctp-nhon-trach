@@ -274,6 +274,36 @@ const TEMPLATES: ScheduleTemplate[] = [
   { wbsCode: '8.1', level: 2, name: '8.1 Lấy sổ hồng / Obtain the Pink Book', discipline: 'Hạ tầng', block: 'Toàn dự án', startDay: 417, endDay: 506 },
 ]
 
+function isDigitChar(ch: string | undefined): boolean {
+  return !!ch && ch >= '0' && ch <= '9'
+}
+
+/** Tách 1 tên hạng mục song ngữ "VI / EN" GIỮ NGUYÊN VĂN từ hồ sơ gốc (xem ghi chú TEMPLATES ở
+ * trên) thành 2 chuỗi riêng để hiển thị theo đúng ngôn ngữ đang chọn (LanguageContext) - CHỈ TÁCH,
+ * không tự dịch thêm chữ nào. Coi dấu "/" là ranh giới VI/EN, TRỪ dấu "/" nằm giữa 2 chữ số (vd
+ * "1/500" - tỷ lệ quy hoạch 1:500 trong "2.1", không phải ranh giới ngôn ngữ).
+ *
+ * Nếu không tìm thấy ĐÚNG 1 ranh giới hợp lệ thì trả lại y nguyên chuỗi gốc cho cả 2 ngôn ngữ, an
+ * toàn hơn là đoán sai và hiện văn bản lộn xộn:
+ * - 0 ranh giới: dòng gốc chỉ có tiếng Anh (vd "4.2.1 Main building", "3.2.2 MEPF") - không tự
+ *   dịch thêm, đúng nguyên tắc đã ghi ở TEMPLATES.
+ * - >1 ranh giới: câu chứa cụm dạng tỷ lệ/công suất lặp lại ở CẢ 2 vế kiểu "cọc/ngày" (piles/day)
+ *   AN TRƯỚC ranh giới thật (vd "4.2.1.2.2 Mass piles (19-20 tim cọc/ ngày, 1 Robot)/ Robot
+ *   (19-20 piles/ day,1 Robot): 1182 piles" - 3 dấu "/", không thể phân biệt an toàn dấu nào mới
+ *   là ranh giới VI/EN thật bằng quy tắc đơn giản).
+ */
+function splitBilingualName(fullName: string, wbsCode: string): string {
+  const candidates: number[] = []
+  for (let i = 0; i < fullName.length; i++) {
+    if (fullName[i] !== '/') continue
+    if (isDigitChar(fullName[i - 1]) && isDigitChar(fullName[i + 1])) continue // "1/500" - không phải ranh giới
+    candidates.push(i)
+  }
+  if (candidates.length !== 1) return fullName
+  const enPart = fullName.slice(candidates[0] + 1).trim()
+  return wbsCode && !enPart.startsWith(wbsCode) ? `${wbsCode} ${enPart}` : enPart
+}
+
 // ----- Xây dựng cây cha-con TỪ danh sách phẳng (đúng thứ tự pre-order như file gốc) -----
 // Thuật toán "stack" chuẩn cho outline lồng nhau: mỗi dòng đẩy lên stack, dòng sau có level nhỏ
 // hơn/bằng thì pop bớt - đỉnh stack còn lại (nếu có) chính là cha trực tiếp.
@@ -314,6 +344,7 @@ function buildLeafItem(t: ScheduleTemplate, index: number): ScheduleItem {
     level: t.level,
     isSummary: false as const,
     name: t.name,
+    nameEn: splitBilingualName(t.name, t.wbsCode),
     discipline: t.discipline,
     block: t.block,
     plannedStart,
@@ -405,6 +436,7 @@ function buildSummaryItem(t: ScheduleTemplate, index: number, children: Schedule
     level: t.level,
     isSummary: true,
     name: t.name,
+    nameEn: splitBilingualName(t.name, t.wbsCode),
     discipline: t.discipline,
     block: t.block,
     plannedStart,

@@ -27,6 +27,16 @@ export const PLATFORM_TITLE = 'DỰ ÁN CÔNG TY TNHH CTP NHƠN TRẠCH - GIAI �
 // nhân trong khung tên hồ sơ thiết kế, không viết tắt thêm.
 export const PROJECT_INVESTOR = 'Công ty TNHH CTP Nhơn Trạch'
 
+// Bản tiếng Anh cho chức năng song ngữ (yêu cầu người dùng 2026-09-02) - dịch tên riêng/địa danh
+// theo đúng cách ghi tên doanh nghiệp có vốn nước ngoài (giữ "CTP Nhon Trach", bỏ dấu, đúng cách
+// tập đoàn "ctpark" tự giới thiệu tiếng Anh trên các dự án khác), KHÔNG dịch nghĩa đen "TNHH" ->
+// dùng "Co., Ltd." theo đúng chuẩn hành chính doanh nghiệp tiếng Anh.
+export const PROJECT_NAME_EN = 'CTP Nhon Trach Co., Ltd. Project - Phase 2'
+export const PROJECT_ADDRESS_EN =
+  'Lot B-6, Vo Van Tan Street, Nhon Trach Textile & Garment Industrial Zone, Nhon Trach Ward, Dong Nai City'
+export const PLATFORM_TITLE_EN = 'CTP NHON TRACH CO., LTD. PROJECT - PHASE 2'
+export const PROJECT_INVESTOR_EN = 'CTP Nhon Trach Co., Ltd.'
+
 // Tổng giá trị gói thầu Giai đoạn 2, TRƯỚC VAT - khớp đúng dòng "TOTAL AMOUNT (EXCLUDING VAT)"
 // trong tab "Sum P2" của BOQ (tổng 8 Bill: 15.017.755.000 + 374.885.000 + 700.000.000 +
 // 225.475.347.000 + 12.973.546.000 + 22.285.175.000 + 121.213.587.000 + 380.000.000). Hồ sơ BOQ
@@ -93,10 +103,25 @@ export const CURRENT_MONTH_INDEX = Math.min(
 // phần nhỏ (diện tích trạm điện) suy ra từ bảng thống kê công trình bị xáo trộn thứ tự cột khi
 // trích xuất PDF - độ lệch nếu có chỉ ảnh hưởng vài chục m² trên tổng ~600m², không đáng kể.
 export const BLOCKS: BlockInfo[] = [
-  { id: 'A', name: 'Nhà xưởng chính RBF6-7', areaM2: 43_170.1 },
-  { id: 'B', name: 'Hạ tầng kỹ thuật (đường, thoát nước, cây xanh)', areaM2: 48_218.53 },
-  { id: 'C', name: 'Công trình phụ trợ (bể nước, XLNT, trạm điện)', areaM2: 718.85 },
-  { id: 'D', name: 'Bãi đậu xe, hàng rào & nhà bảo vệ', areaM2: 1_822.75 },
+  { id: 'A', name: 'Nhà xưởng chính RBF6-7', nameEn: 'RBF6-7 Main Factory Buildings', areaM2: 43_170.1 },
+  {
+    id: 'B',
+    name: 'Hạ tầng kỹ thuật (đường, thoát nước, cây xanh)',
+    nameEn: 'Site Infrastructure (roads, drainage, landscaping)',
+    areaM2: 48_218.53,
+  },
+  {
+    id: 'C',
+    name: 'Công trình phụ trợ (bể nước, XLNT, trạm điện)',
+    nameEn: 'Ancillary Facilities (water tank, WWTP, power station)',
+    areaM2: 718.85,
+  },
+  {
+    id: 'D',
+    name: 'Bãi đậu xe, hàng rào & nhà bảo vệ',
+    nameEn: 'Parking, Fence & Guardhouse',
+    areaM2: 1_822.75,
+  },
 ]
 export const BLOCK_IDS = BLOCKS.map((b) => b.id)
 

@@ -25,6 +25,9 @@ export interface RolePermissions {
 export interface BlockInfo {
   id: BlockId
   name: string
+  /** Tên tiếng Anh - tuỳ chọn, dùng khi useLanguage().language === 'en' (xem pick() trong
+   * src/i18n/LanguageContext.tsx). Thiếu thì hiện lại bản tiếng Việt. */
+  nameEn?: string
   areaM2: number
 }
 
@@ -48,6 +51,10 @@ export interface ScheduleItem {
   level: number
   isSummary: boolean
   name: string
+  /** Bản tiếng Anh của `name`, TÁCH (không dịch thêm) từ chính chuỗi song ngữ "VI / EN" gốc của
+   * hồ sơ MS Project (xem splitBilingualName trong data/schedule.ts) - trùng với `name` khi dòng
+   * gốc không có phần tiếng Anh riêng hoặc không tách an toàn được. */
+  nameEn: string
   discipline: Discipline
   block: BlockId | 'Toàn dự án'
   plannedStart: Date

@@ -3,6 +3,7 @@ import { X, Tag, Hash, Loader2 } from 'lucide-react'
 import type { IfcAPI } from 'web-ifc'
 import { getElementProperties } from '../../../ifc/parseIfc'
 import type { IfcElementProperties } from '../../../ifc/types'
+import { useLanguage } from '../../../i18n/LanguageContext'
 
 interface IfcElementPanelProps {
   api: IfcAPI
@@ -12,6 +13,7 @@ interface IfcElementPanelProps {
 }
 
 export function IfcElementPanel({ api, modelID, expressID, onClose }: IfcElementPanelProps) {
+  const { tr } = useLanguage()
   const [props, setProps] = useState<IfcElementProperties | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -34,7 +36,7 @@ export function IfcElementPanel({ api, modelID, expressID, onClose }: IfcElement
   return (
     <div className="panel-strong absolute right-4 top-4 max-h-[calc(100%-2rem)] w-80 overflow-y-auto p-4">
       <div className="mb-3 flex items-start justify-between gap-2">
-        <p className="label-caps text-brand">Thuộc tính cấu kiện</p>
+        <p className="label-caps text-brand">{tr('Thuộc tính cấu kiện', 'Element properties')}</p>
         <button type="button" onClick={onClose} className="p-0.5 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface">
           <X size={16} />
         </button>
@@ -42,7 +44,7 @@ export function IfcElementPanel({ api, modelID, expressID, onClose }: IfcElement
 
       {loading && (
         <div className="flex items-center gap-2 py-6 text-sm text-on-surface-variant">
-          <Loader2 size={16} className="animate-spin" /> Đang tải thuộc tính...
+          <Loader2 size={16} className="animate-spin" /> {tr('Đang tải thuộc tính...', 'Loading properties...')}
         </div>
       )}
 
@@ -60,7 +62,7 @@ export function IfcElementPanel({ api, modelID, expressID, onClose }: IfcElement
 
           {props.propertySets.length === 0 ? (
             <p className="border-t border-outline-variant pt-3 text-xs text-outline">
-              File không kèm bộ thuộc tính (Pset) cho cấu kiện này.
+              {tr('File không kèm bộ thuộc tính (Pset) cho cấu kiện này.', 'The file does not include a property set (Pset) for this element.')}
             </p>
           ) : (
             <div className="space-y-3 border-t border-outline-variant pt-3">

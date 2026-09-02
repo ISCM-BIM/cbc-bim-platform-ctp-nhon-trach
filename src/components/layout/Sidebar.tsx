@@ -10,8 +10,9 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import type { ScreenId } from '../../types'
-import { SCREEN_LABELS } from '../../data/roles'
+import { SCREEN_LABELS, SCREEN_LABELS_EN } from '../../data/roles'
 import { useRole } from '../../context/RoleContext'
+import { useLanguage, pick } from '../../i18n/LanguageContext'
 import iscmShorten from '../../assets/logos/iscm_shorten.png'
 
 const NAV_ICONS: Record<ScreenId, LucideIcon> = {
@@ -33,6 +34,7 @@ interface SidebarProps {
 
 export function Sidebar({ active, onNavigate, onLogoClick }: SidebarProps) {
   const { permissions } = useRole()
+  const { language, tr } = useLanguage()
 
   return (
     <aside className="panel-navy flex h-full w-64 shrink-0 flex-col">
@@ -40,7 +42,7 @@ export function Sidebar({ active, onNavigate, onLogoClick }: SidebarProps) {
         type="button"
         onClick={onLogoClick}
         className="flex items-center gap-2.5 border-b border-white/10 px-5 py-5 text-left transition-colors duration-150 hover:bg-white/5"
-        title="Về màn hình giới thiệu"
+        title={tr('Về màn hình giới thiệu', 'Back to intro screen')}
       >
         <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden bg-white">
           <img src={iscmShorten} alt="ISCM" className="h-full w-full object-cover" />
@@ -67,7 +69,7 @@ export function Sidebar({ active, onNavigate, onLogoClick }: SidebarProps) {
               }`}
             >
               <Icon size={18} strokeWidth={2} />
-              <span className="truncate">{SCREEN_LABELS[screen]}</span>
+              <span className="truncate">{pick(SCREEN_LABELS, SCREEN_LABELS_EN, screen, language)}</span>
               {isActive && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-brand" />}
             </button>
           )

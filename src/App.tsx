@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
 import type { AppView, Discipline, ScreenId } from './types'
 import { RoleProvider, useRole } from './context/RoleContext'
+import { LanguageProvider, useLanguage } from './i18n/LanguageContext'
 import { AppShell } from './components/layout/AppShell'
 import { Intro } from './screens/Intro/Intro'
 import { Dashboard } from './screens/Dashboard/Dashboard'
@@ -22,6 +23,7 @@ function Shell() {
   const [view, setView] = useState<AppView>('intro')
   const [model3DFocus, setModel3DFocus] = useState<Model3DFocus | null>(null)
   const { permissions } = useRole()
+  const { tr } = useLanguage()
 
   useEffect(() => {
     if (view !== 'intro' && !permissions.visibleScreens.includes(view)) {
@@ -44,7 +46,13 @@ function Shell() {
     <AppShell active={active} onNavigate={setView} onLogoClick={() => setView('intro')}>
       {active === 'dashboard' && <Dashboard />}
       {active === 'model3d' && (
-        <Suspense fallback={<div className="flex h-full items-center justify-center text-sm text-on-surface-variant">Đang tải màn hình Mô hình 3D...</div>}>
+        <Suspense
+          fallback={
+            <div className="flex h-full items-center justify-center text-sm text-on-surface-variant">
+              {tr('Đang tải màn hình Mô hình 3D...', 'Loading 3D Model screen...')}
+            </div>
+          }
+        >
           <Model3D focus={model3DFocus} />
         </Suspense>
       )}
@@ -60,9 +68,11 @@ function Shell() {
 
 function App() {
   return (
-    <RoleProvider>
-      <Shell />
-    </RoleProvider>
+    <LanguageProvider>
+      <RoleProvider>
+        <Shell />
+      </RoleProvider>
+    </LanguageProvider>
   )
 }
 
